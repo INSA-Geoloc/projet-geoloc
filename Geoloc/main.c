@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <cairo.h>
+#include <cairo/cairo.h>
 #include <gtk/gtk.h>
 
 static void do_drawing(cairo_t *);
@@ -55,7 +55,7 @@ static void do_drawing(cairo_t *cr)
 static gboolean clicked(GtkWidget *widget, GdkEventButton *event,
                         gpointer user_data)
 {
-    printf(“clicked\n”);
+    printf("clicked\n");
     if (event->button == 1) {
         glob.coordx[glob.count] = event->x;
         glob.coordy[glob.count++] = event->y;
@@ -84,14 +84,14 @@ int main(int argc, char *argv[])
     
     gtk_widget_add_events(window, GDK_BUTTON_PRESS_MASK);
     
-    g_signal_connect(G_OBJECT(darea), “draw”, G_CALLBACK(on_draw_event), NULL);
-    g_signal_connect(window, “destroy”, G_CALLBACK(gtk_main_quit), NULL);
+    g_signal_connect(G_OBJECT(darea), "draw", G_CALLBACK(on_draw_event), NULL);
+    g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
     
-    g_signal_connect(window, “button-press-event”, G_CALLBACK(clicked), NULL);
+    g_signal_connect(window, "button-press-event", G_CALLBACK(clicked), NULL);
     
     gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
     gtk_window_set_default_size(GTK_WINDOW(window), 400, 300);
-    gtk_window_set_title(GTK_WINDOW(window), “Lines”);
+    gtk_window_set_title(GTK_WINDOW(window), "Lines");
     
     gtk_widget_show_all(window);
     
