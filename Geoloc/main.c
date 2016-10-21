@@ -2,6 +2,8 @@
 #include <cairo/cairo.h>
 #include <gtk/gtk.h>
 
+#include "traitement-donnees.h"
+
 static void do_drawing(cairo_t *);
 
 struct {
@@ -31,7 +33,7 @@ static void do_drawing(cairo_t *cr)
     
     
     
-    image = cairo_image_surface_create_from_png ("france_wikipedia.png");
+    image = cairo_image_surface_create_from_png("france_wikipedia.png");
     w = cairo_image_surface_get_width (image);
     h = cairo_image_surface_get_height (image);
     cairo_scale (cr, 256.0/w, 256.0/h);
@@ -68,8 +70,15 @@ static gboolean clicked(GtkWidget *widget, GdkEventButton *event,
     return TRUE;
 }
 
+
+
 int main(int argc, char *argv[])
 {
+    
+    //GPStoLambert();
+    LambertToGPS(620130,6681057);
+    
+    
     GtkWidget *window;
     GtkWidget *darea;
     
