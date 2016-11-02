@@ -6,6 +6,7 @@
 #include <string.h>
 #include "data.h"
 #include "parcours_list.h"
+#include "traitement-donnees.h"
 #include "graphic.h"
 
 gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data)
@@ -165,6 +166,25 @@ gboolean clicked(GtkWidget *widget, GdkEventButton *event, gpointer user_data)
     setCircle(widget, 234, 176);
 
     cairo_stroke(cr);
+
+    cairo_text_extents_t extents;
+
+	const char *utf8 = "INSA";
+	double x,y;
+
+	cairo_select_font_face (cr, "Sans",
+	    CAIRO_FONT_SLANT_NORMAL,
+	    CAIRO_FONT_WEIGHT_NORMAL);
+
+	cairo_set_font_size (cr, 12.0);
+	cairo_set_source_rgba (cr, 0, 0, 0, 0.8);
+	cairo_text_extents (cr, utf8, &extents);
+
+	x=234;
+	y=176;
+
+	cairo_move_to (cr, x,y);
+	cairo_show_text (cr, utf8);
 
 
     return TRUE;

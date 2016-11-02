@@ -1,13 +1,15 @@
 #ifndef   _GRAPHIC_H
 #define   _GRAPHIC_H
 
+#include <math.h>
+
 struct {
     int count;
     double coordx[100];
     double coordy[100];
 } glob;
 
-#define M_PI 3.14
+//#define M_PI 3.14
 
 void do_drawing(cairo_t *);
 

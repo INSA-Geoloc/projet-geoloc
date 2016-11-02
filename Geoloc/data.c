@@ -5,6 +5,7 @@
 #include <math.h>
 #include "data.h"
 #include "parcours_list.h"
+#include "traitement-donnees.h"
 
 
 /**
@@ -42,14 +43,6 @@ void displayData(dataPoint * d){
 
 }
 
-/**
- * Transforme des degres en radians
- * @param  degrees
- * @return
- */
-double to_radians(double degrees){
-    return (degrees * M_PI) / 180.0;
-}
 
 /**
  * @brief Affichage de la distance entre deux points a partir de leurs coords GPS
@@ -64,11 +57,11 @@ double distanceBtwnPoints(dataPoint * d1, dataPoint * d2){
    printf("Lat 1 : %lf long 1 : %lf\n", d1->latitude, d1->longitude);
    printf("Lat 2 : %lf long 2 : %lf\n", d2->latitude, d2->longitude);
 
-   lat_a = to_radians(48.862725/*d1->latitude*/);
-   lon_a = to_radians(2.287592/*d1->longitude*/);
+   lat_a = to_radians(d1->latitude);
+   lon_a = to_radians(d1->longitude);
 
-   lat_b = to_radians(47.08086/*d2->latitude*/);
-   lon_b = to_radians(2.4173637/*d2->longitude*/);
+   lat_b = to_radians(d2->latitude);
+   lon_b = to_radians(d2->longitude);
 
    printf("Lat 1 : %lf long 1 : %lf\n", lat_a, lon_a);
    printf("Lat 2 : %lf long 2 : %lf\n", lat_b, lon_b);
