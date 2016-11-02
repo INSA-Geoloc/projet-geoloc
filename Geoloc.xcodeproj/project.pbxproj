@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		66B650361DBA0EC800B748A2 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 66B650351DBA0EC800B748A2 /* main.c */; };
+		66F8BEB01DBA59DD0040DD28 /* traitement-donnees.c in Sources */ = {isa = PBXBuildFile; fileRef = 66F8BEAE1DBA59DD0040DD28 /* traitement-donnees.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -24,7 +25,9 @@
 
 /* Begin PBXFileReference section */
 		66B650321DBA0EC800B748A2 /* Geoloc */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Geoloc; sourceTree = BUILT_PRODUCTS_DIR; };
-		66B650351DBA0EC800B748A2 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
+		66B650351DBA0EC800B748A2 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; lineEnding = 0; name = main.c; path = /Users/Quentin/Code/Geoloc/Geoloc/main.c; sourceTree = "<absolute>"; };
+		66F8BEAE1DBA59DD0040DD28 /* traitement-donnees.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "traitement-donnees.c"; sourceTree = "<group>"; };
+		66F8BEAF1DBA59DD0040DD28 /* traitement-donnees.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "traitement-donnees.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,8 +61,18 @@
 			isa = PBXGroup;
 			children = (
 				66B650351DBA0EC800B748A2 /* main.c */,
+				66F8BEB11DBA59E80040DD28 /* traitement-donnes */,
 			);
 			path = Geoloc;
+			sourceTree = "<group>";
+		};
+		66F8BEB11DBA59E80040DD28 /* traitement-donnes */ = {
+			isa = PBXGroup;
+			children = (
+				66F8BEAE1DBA59DD0040DD28 /* traitement-donnees.c */,
+				66F8BEAF1DBA59DD0040DD28 /* traitement-donnees.h */,
+			);
+			name = "traitement-donnes";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -121,6 +134,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				66B650361DBA0EC800B748A2 /* main.c in Sources */,
+				66F8BEB01DBA59DD0040DD28 /* traitement-donnees.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -217,16 +231,39 @@
 		66B6503A1DBA0EC800B748A2 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = YES;
 				DEVELOPMENT_TEAM = 335428S85V;
+				HEADER_SEARCH_PATHS = "";
+				"HEADER_SEARCH_PATHS[arch=*]" = (
+					/opt/X11/include,
+					"/Users/Quentin/gtk/inst/include/**",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/Cellar/cairo/1.14.6_1/lib,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				"USER_HEADER_SEARCH_PATHS[arch=*]" = /Users/Quentin/gtk;
 			};
 			name = Debug;
 		};
 		66B6503B1DBA0EC800B748A2 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = YES;
 				DEVELOPMENT_TEAM = 335428S85V;
+				HEADER_SEARCH_PATHS = "";
+				"HEADER_SEARCH_PATHS[arch=*]" = (
+					"/opt/X11/include/**",
+					"/Users/Quentin/gtk/inst/include/**",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/Cellar/cairo/1.14.6_1/lib,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				USER_HEADER_SEARCH_PATHS = "";
+				"USER_HEADER_SEARCH_PATHS[arch=*]" = /Users/Quentin/gtk;
 			};
 			name = Release;
 		};
@@ -249,6 +286,7 @@
 				66B6503B1DBA0EC800B748A2 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
