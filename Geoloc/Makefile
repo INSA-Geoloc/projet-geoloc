@@ -11,6 +11,12 @@ GTKFLAGS = `pkg-config --cflags --libs gtk+-3.0` `pkg-config --cflags cairo`
 main: main.o graphic.o parcours_list.o data.o traitement-donnees.o
 	$(CC) main.o graphic.o parcours_list.o data.o traitement-donnees.o -o main -lm $(GTKFLAGS)
 
+mainwindow: main_window.o graphic.o parcours_list.o data.o traitement-donnees.o
+	$(CC) main_window.o graphic.o parcours_list.o data.o traitement-donnees.o -o mainwindow -lm $(GTKFLAGS)
+
+main_window.o: main_window.c
+	$(CC) $(DATAFLAGS) main_window.c $(GTKFLAGS)
+
 graphic.o: graphic.c graphic.h parcours_list.h data.h
 	$(CC) $(DATAFLAGS) graphic.c $(GTKFLAGS) -lm
 

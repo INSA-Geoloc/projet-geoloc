@@ -1,5 +1,32 @@
+#include <cairo.h>
 #include <gtk/gtk.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <string.h>
+#include <math.h>
+#include "data.h"
+#include "parcours_list.h"
+#include "traitement-donnees.h"
+#include "graphic.h"
 
+
+
+parcours * load_Data(char * filename)
+{
+  FILE* file;
+  parcours * list;
+
+  file = fopen(filename, "r");
+  if(file == NULL)
+  {
+     perror("Fail open data");
+     exit(EXIT_FAILURE);
+  }
+
+  list = readData(file);
+  return list;
+}
 
 static void choose_File( GtkWidget *item, gpointer data)
 {
@@ -19,15 +46,22 @@ static void choose_File( GtkWidget *item, gpointer data)
   res = gtk_dialog_run (GTK_DIALOG (dialog));
   if (res == GTK_RESPONSE_ACCEPT)
   {
+    parcours * data;
     char *filename;
     GtkFileChooser *chooser = GTK_FILE_CHOOSER (dialog);
     filename = gtk_file_chooser_get_filename (chooser);
-    printf("%s\n",filename);
+    
+
+    data = load_Data(filename);
+    displayList(data);
+    
     g_free (filename);
   }
 
   gtk_widget_destroy (dialog);
 }
+
+
 
 
 int main(int argc, char *argv[]) {
