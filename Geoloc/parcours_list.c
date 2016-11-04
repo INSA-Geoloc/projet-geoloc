@@ -21,9 +21,8 @@ parcours* readData(FILE * p){
 
    while(fscanf(p, "date:%d,lat:%lf,long:%lf;\n", &date, &lat, &lon) == 3){
       read_mat = newPoint(date, lon, lat);
-      addPoint(read_mat, lp);
+      addPoint(read_mat, lp);   
    }
-   
    return lp;
 }
 

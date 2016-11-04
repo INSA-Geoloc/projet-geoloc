@@ -9,6 +9,7 @@
 #include "parcours_list.h"
 #include "traitement-donnees.h"
 #include "graphic.h"
+#include <unistd.h>
 
 
 
@@ -16,6 +17,13 @@ parcours * load_Data(char * filename)
 {
   FILE* file;
   parcours * list;
+  char test[50];
+  int nbchar;
+
+  //
+  int date = 0;
+  double lat,lon;
+  //
 
   file = fopen(filename, "r");
   if(file == NULL)
@@ -24,11 +32,16 @@ parcours * load_Data(char * filename)
      exit(EXIT_FAILURE);
   }
 
-  list = readData(file);
-  return list;
+  while(fscanf(file, "date:%d,lat:%lf,long:%lf;\n", &date, &lat, &lon) )
+  {
+    printf("ok \n" );
+  }
+  printf("%d--\n", date);
+  fclose(file);
+  return list;  
 }
 
-static void choose_File( GtkWidget *item, gpointer data)
+void choose_File( GtkWidget *item, gpointer data)
 {
   GtkWidget *dialog;
   GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_OPEN;
@@ -46,16 +59,14 @@ static void choose_File( GtkWidget *item, gpointer data)
   res = gtk_dialog_run (GTK_DIALOG (dialog));
   if (res == GTK_RESPONSE_ACCEPT)
   {
-    parcours * data;
+    parcours * list;
     char *filename;
     GtkFileChooser *chooser = GTK_FILE_CHOOSER (dialog);
     filename = gtk_file_chooser_get_filename (chooser);
     
-
-    data = load_Data(filename);
-    displayList(data);
-    
+    list = load_Data(filename);
     g_free (filename);
+
   }
 
   gtk_widget_destroy (dialog);
@@ -104,7 +115,7 @@ int main(int argc, char *argv[]) {
 
   window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
   gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
-  gtk_window_set_default_size(GTK_WINDOW(window), 300, 200);
+  gtk_window_set_default_size(GTK_WINDOW(window), 300, 25);
   gtk_window_set_title(GTK_WINDOW(window), "Geoloc");
 
   vbox = gtk_box_new(FALSE, 0);
