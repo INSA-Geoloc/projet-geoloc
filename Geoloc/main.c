@@ -8,6 +8,7 @@
 #include <errno.h>
 #include <string.h>
 #include <math.h>
+#include <time.h>
 #include "data.h"
 #include "parcours_list.h"
 #include "traitement-donnees.h"
@@ -87,6 +88,7 @@ int main(int argc, char *argv[]){
     g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
 
     g_signal_connect(window, "button-press-event", G_CALLBACK(clicked), NULL);
+
 
     gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
     gtk_window_set_default_size(GTK_WINDOW(window), 600, 600);
