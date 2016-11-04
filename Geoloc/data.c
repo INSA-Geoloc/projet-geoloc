@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <string.h>
-#include <math.h>
+#include <time.h>
 #include "data.h"
 #include "parcours_list.h"
 #include "traitement-donnees.h"
@@ -43,6 +43,27 @@ void displayData(dataPoint * d){
 
 }
 
+void timeTxt(time_t timestamp){
+   time_t t = timestamp;
+   const char *format = "%A %d %B %Y %H:%M:%S";
+
+   struct tm lt;
+   char res[32];
+
+   localtime_r(&t, &lt);
+
+   if (strftime(res, sizeof(res), format, &lt) == 0) {
+        fprintf(stderr,  "strftime(3): cannot format supplied "
+                                        "date/time into buffer of size %u "
+                                        "using: '%s'\n",
+                                        sizeof(res), format);
+        exit(EXIT_FAILURE);
+   }
+   printf("TEST time\n");
+   printf("%s\n", res);
+
+}
+
 
 /**
  * @brief Affichage de la distance entre deux points a partir de leurs coords GPS
@@ -65,6 +86,8 @@ double distanceBtwnPoints(dataPoint * d1, dataPoint * d2){
 
    printf("Lat 1 : %lf long 1 : %lf\n", lat_a, lon_a);
    printf("Lat 2 : %lf long 2 : %lf\n", lat_b, lon_b);
+
+   timeTxt(d1->time);
 
 
 

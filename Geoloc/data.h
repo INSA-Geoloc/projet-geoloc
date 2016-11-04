@@ -16,9 +16,9 @@ extern dataPoint* newPoint(int t,double longi, double lat);
 
 extern void displayData(dataPoint * d);
 
-extern double to_radians2(double degrees);
-
 extern double distanceBtwnPoints(dataPoint * d1, dataPoint * d2);
+
+extern void timeTxt(time_t timestamp);
 
 extern void destroyPoint(dataPoint * d);
 

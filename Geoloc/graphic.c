@@ -24,14 +24,14 @@ void do_drawing(cairo_t *cr)
     cairo_surface_t *image;
 
     cairo_set_source_rgb(cr, 0, 0, 0);
-    cairo_set_line_width(cr, 0.5);
+    //cairo_set_line_width(cr, 0.5);
 
 
 
     image = cairo_image_surface_create_from_png ("france_wikipedia.png");
     w = cairo_image_surface_get_width (image);
     h = cairo_image_surface_get_height (image);
-    cairo_scale (cr, 512.0/w, 512.0/h);
+    cairo_scale(cr, 512.0/w, 512.0/h);
 
 
     cairo_set_source_surface (cr, image, 0, 0);
@@ -52,48 +52,119 @@ void do_drawing(cairo_t *cr)
 gboolean setPoint(GtkWidget *widget, double xp, double yp){
     cairo_t *cr;
 
-    cr = gdk_cairo_create (gtk_widget_get_window (widget));
+    cr = gdk_cairo_create(gtk_widget_get_window(widget));
 
-    cairo_arc (cr, xp, yp, 10.0, 0, 2*M_PI);
+    cairo_arc(cr, xp, yp, 10.0, 0, 2*M_PI);
 
-    cairo_close_path (cr);
+    cairo_close_path(cr);
 
-    cairo_set_line_width (cr, 2.0); //Border weight
-    cairo_set_source_rgba (cr, 1, 0.2, 0.2, 0.8); //Fill colo
-    cairo_fill_preserve (cr);
-    cairo_set_source_rgba (cr, 0, 0, 0, 0.8); //Border color
+    cairo_set_line_width(cr, 2.0); //Border weight
+    cairo_set_source_rgba(cr, 1, 0.2, 0.2, 0.8); //Fill colo
+    cairo_fill_preserve(cr);
+    cairo_set_source_rgba(cr, 0, 0, 0, 0.8); //Border color
 
-    cairo_stroke (cr);
+    cairo_stroke(cr);
+
+    cairo_destroy(cr);
 
     return TRUE;
 }
 
-gboolean setCircle(GtkWidget *widget, double xc, double yc){
+gboolean setCircle(GtkWidget *widget, double xc, double yc, double taille){
     cairo_t *cr;
 
-    cr = gdk_cairo_create (gtk_widget_get_window (widget));
+    cr = gdk_cairo_create(gtk_widget_get_window (widget));
 
-    double radius = 100.0;
+    double radius = taille;
     double angle1 = 0  * (M_PI/180.0);  // angles are specified 
     double angle2 = 360.0 * (M_PI/180.0);  // in radians 
 
-    cairo_set_line_width (cr, 10.0);
-    cairo_arc (cr, xc, yc, radius, angle1, angle2);
+    cairo_set_line_width(cr, 10.0);
+    cairo_arc(cr, xc, yc, radius, angle1, angle2);
 
-    cairo_close_path (cr);
+    cairo_close_path(cr);
 
-    cairo_set_line_width (cr, 5.0); //Border wight
-    cairo_set_source_rgba (cr, 1, 0.2, 0.2, 0.2); //Fill colo
-    cairo_fill_preserve (cr);
-    cairo_set_source_rgba (cr, 1, 0.2, 0.2, 0.8); //Border color
+    cairo_set_line_width(cr, 5.0); //Border wight
+    cairo_set_source_rgba(cr, 1, 0.2, 0.2, 0.2); //Fill colo
+    cairo_fill_preserve(cr);
+    cairo_set_source_rgba(cr, 1, 0.2, 0.2, 1); //Border color
 
-    cairo_stroke (cr);
+    cairo_stroke(cr);
+
+    cairo_destroy(cr);
 
     return TRUE;
+}
+
+gboolean setTest(GtkWidget *widget){
+		cairo_surface_t *surface =
+            cairo_image_surface_create(CAIRO_FORMAT_ARGB32, 500, 500);
+        cairo_t *cr =
+            cairo_create(surface);
+
+        /*cairo_select_font_face (cr, "serif", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
+        cairo_set_font_size (cr, 32.0);
+        cairo_set_source_rgb (cr, 0.0, 0.0, 1.0);
+        cairo_move_to (cr, 10.0, 50.0);
+        cairo_show_text (cr, "Hello, world");*/
+
+        /*double radius = 100;
+	    double angle1 = 0  * (M_PI/180.0);  // angles are specified 
+	    double angle2 = 360.0 * (M_PI/180.0);  // in radians 
+
+	    cairo_set_line_width (cr, 10.0);
+	    cairo_arc (cr, 100, 100, radius, angle1, angle2);
+
+	    cairo_close_path (cr);
+
+	    cairo_set_line_width (cr, 5.0); //Border wight
+	    cairo_set_source_rgba (cr, 1, 0.2, 0.2, 0.2); //Fill colo
+	    cairo_fill_preserve (cr);
+	    cairo_set_source_rgba (cr, 1, 0.2, 0.2, 0.8); //Border color
+
+
+	    setCircle(widget, 234, 176, 100);
+
+	    cairo_stroke (cr);
+
+	    printf("Ca test\n");
+
+        cairo_destroy (cr);
+        cairo_surface_destroy(surface);*/
+
+            //black background
+        cairo_set_source_rgb(cr, 0, 0, 0);
+        cairo_paint(cr);
+
+        // Redirect drawing to a temporary surface
+        cairo_push_group(cr);
+
+        //blue text
+        cairo_set_source_rgb(cr, 0, 0, 1);
+        cairo_set_font_size(cr, 50);
+        cairo_move_to(cr, 75, 160);
+        cairo_text_path(cr, "foobar");
+        cairo_fill(cr);
+
+        // Draw part of the blue text
+        cairo_pop_group_to_source(cr);
+        cairo_rectangle(cr, 125, 125, 50, 50);
+        cairo_fill(cr);
+
+        cairo_destroy (cr);
+        cairo_surface_write_to_png (surface, "output.png");
+        cairo_surface_destroy (surface);
+
+        return TRUE;
 }
 
 gboolean clicked(GtkWidget *widget, GdkEventButton *event, gpointer user_data)
 {
+
+	cairo_t *cr;
+
+    cr = gdk_cairo_create (gtk_widget_get_window (widget));
+
     printf("clicked\n");
     if (event->button == 1) {
         glob.coordx[glob.count] = event->x;
@@ -102,12 +173,14 @@ gboolean clicked(GtkWidget *widget, GdkEventButton *event, gpointer user_data)
 
     if (event->button == 3) {
         gtk_widget_queue_draw(widget);
+        return TRUE;
     }
 
-    cairo_t *cr;
+    //setTest(widget);
 
-    cr = gdk_cairo_create (gtk_widget_get_window (widget));
+    do_drawing(cr);
 
+    cairo_scale(cr, 1.55, 1.55); //Trouver le bon calcul à chaque fois
     
 
     /*double dashes[] = {50.0,  // ink
@@ -142,14 +215,16 @@ gboolean clicked(GtkWidget *widget, GdkEventButton *event, gpointer user_data)
 
     cairo_stroke (cr);
     */
-    
 
     //Parcours
+
+    //setPoint(widget, 120, 120);
     cairo_set_line_width (cr, 4.0);
     cairo_set_source_rgba (cr, 1, 0.2, 0.2, 0.8);
 
     cairo_move_to(cr, 0, 0);
     cairo_line_to(cr, 120, 120);
+    cairo_stroke(cr);
 
     setPoint(widget, 120, 120);
 
@@ -163,7 +238,9 @@ gboolean clicked(GtkWidget *widget, GdkEventButton *event, gpointer user_data)
 
     setPoint(widget, 234, 176);
 
-    setCircle(widget, 234, 176);
+    setCircle(widget, 234, 176, 100);
+
+    setTest(widget);
 
     cairo_stroke(cr);
 
@@ -186,7 +263,13 @@ gboolean clicked(GtkWidget *widget, GdkEventButton *event, gpointer user_data)
 	cairo_move_to (cr, x,y);
 	cairo_show_text (cr, utf8);
 
+	cairo_destroy(cr);
+
 
     return TRUE;
+}
+
+void enter_button(GtkWidget *widget, gpointer data) {
+	printf("Mon test\n");
 }
 
