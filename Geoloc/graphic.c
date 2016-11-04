@@ -35,7 +35,7 @@ void do_drawing(cairo_t *cr)
 
 
     cairo_set_source_surface (cr, image, 0, 0);
-    cairo_paint (cr);
+    cairo_paint(cr);
     // For drawing lines when glob has evolved
     int i, j;
     for (i = 0; i <= glob.count - 1; i++ ) {
@@ -158,6 +158,29 @@ gboolean setTest(GtkWidget *widget){
         return TRUE;
 }
 
+gboolean setPath(GtkWidget *widget, parcours* lp){
+		parcours * tmp = lp->next;
+
+		cairo_t *cr;
+
+    	cr = gdk_cairo_create(gtk_widget_get_window(widget));
+
+  		while(tmp->pt != NULL){
+      		setPoint(widget, tmp->pt->longitude, tmp->pt->latitude);
+
+		    cairo_move_to(cr, tmp->pt->longitude, tmp->pt->latitude);
+		    if(tmp->next) cairo_line_to(cr, tmp->next->pt->longitude, tmp->next->pt->latitude); else break;
+		    cairo_stroke(cr);
+
+		    setPoint(widget, tmp->pt->longitude, tmp->pt->latitude); //Hack point au dessus des lignes
+
+		    if(tmp->next) setPoint(widget, tmp->next->pt->longitude, tmp->next->pt->latitude); else break;
+
+      		if(tmp->next) tmp = tmp->next; else break;
+  		}
+
+}
+
 gboolean clicked(GtkWidget *widget, GdkEventButton *event, gpointer user_data)
 {
 
@@ -181,6 +204,29 @@ gboolean clicked(GtkWidget *widget, GdkEventButton *event, gpointer user_data)
     do_drawing(cr);
 
     cairo_scale(cr, 1.55, 1.55); //Trouver le bon calcul à chaque fois
+
+    (parcours*) user_data;
+
+    setPath(widget, (parcours*) user_data);
+
+    /*parcours * L;
+    FILE * data;
+
+    //---lecture des données geolog-----
+    data=fopen("geolog.txt","r");
+
+    if(data == NULL){
+      perror("Fail open data");
+      exit(EXIT_FAILURE);
+    }
+
+    L=readData(data);
+
+    printf("Affichage d'un point d'interet:\n");
+    displayData(L->next->pt);
+
+    fclose(data);
+    destroyList(L);*/
     
 
     /*double dashes[] = {50.0,  // ink
@@ -217,10 +263,11 @@ gboolean clicked(GtkWidget *widget, GdkEventButton *event, gpointer user_data)
     */
 
     //Parcours
-
     //setPoint(widget, 120, 120);
     cairo_set_line_width (cr, 4.0);
     cairo_set_source_rgba (cr, 1, 0.2, 0.2, 0.8);
+
+    setPoint(widget, 0, 0);
 
     cairo_move_to(cr, 0, 0);
     cairo_line_to(cr, 120, 120);
@@ -240,7 +287,7 @@ gboolean clicked(GtkWidget *widget, GdkEventButton *event, gpointer user_data)
 
     setCircle(widget, 234, 176, 100);
 
-    setTest(widget);
+    //setTest(widget);
 
     cairo_stroke(cr);
 
