@@ -12,7 +12,6 @@
 #include <unistd.h>
 
 
-
 parcours * load_Data(char * filename)
 {
   FILE* file;
@@ -31,17 +30,24 @@ parcours * load_Data(char * filename)
      perror("Fail open data");
      exit(EXIT_FAILURE);
   }
-
-  while(fscanf(file, "date:%d,lat:%lf,long:%lf;\n", &date, &lat, &lon) )
+  int retour; 
+  //while(retour = fscanf(file, "date:%d,lat:%lf,long:%lf;\n", &date, &lat, &lon) )
+  while(fscanf(file, "%s", &test) == 1)
   {
-    printf("ok \n" );
+    printf("%s \n", test );
+    sscanf(test, "date:%d,lat:%lf,long:%lf;\n", &date, &lat, &lon);
+    printf("%d--\n", date);
+     printf("%lf--\n", lat);
+    printf("%lf--\n", lon);
+    printf("retour %d\n",retour);
   }
-  printf("%d--\n", date);
+  
+   
   fclose(file);
   return list;  
 }
 
-void choose_File( GtkWidget *item, gpointer data)
+void choose_File(GtkWidget *item, gpointer data)
 {
   GtkWidget *dialog;
   GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_OPEN;
@@ -57,6 +63,7 @@ void choose_File( GtkWidget *item, gpointer data)
                                       NULL);
 
   res = gtk_dialog_run (GTK_DIALOG (dialog));
+
   if (res == GTK_RESPONSE_ACCEPT)
   {
     parcours * list;
@@ -64,8 +71,10 @@ void choose_File( GtkWidget *item, gpointer data)
     GtkFileChooser *chooser = GTK_FILE_CHOOSER (dialog);
     filename = gtk_file_chooser_get_filename (chooser);
     
-    list = load_Data(filename);
+
+    list = load_Data(filename);    
     g_free (filename);
+    printf("Chargement fini\n");
 
   }
 
