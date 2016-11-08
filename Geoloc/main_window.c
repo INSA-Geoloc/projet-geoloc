@@ -32,6 +32,7 @@ parcours * load_Data(char * filename)
   }
   int retour; 
   //while(retour = fscanf(file, "date:%d,lat:%lf,long:%lf;\n", &date, &lat, &lon) )
+  rewind(file);
   while(fscanf(file, "%s", &test) == 1)
   {
     printf("%s \n", test );
@@ -53,6 +54,9 @@ void choose_File(GtkWidget *item, gpointer data)
   GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_OPEN;
   gint res;
 
+  parcours * list;
+  char *filename;
+
   dialog = gtk_file_chooser_dialog_new ("Open File",
                                       NULL,
                                       action,
@@ -66,19 +70,18 @@ void choose_File(GtkWidget *item, gpointer data)
 
   if (res == GTK_RESPONSE_ACCEPT)
   {
-    parcours * list;
-    char *filename;
+    
     GtkFileChooser *chooser = GTK_FILE_CHOOSER (dialog);
     filename = gtk_file_chooser_get_filename (chooser);
     
-
-    list = load_Data(filename);    
+    list = load_Data(filename);   
     g_free (filename);
-    printf("Chargement fini\n");
 
   }
-
   gtk_widget_destroy (dialog);
+
+
+  
 }
 
 
