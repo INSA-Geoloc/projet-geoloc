@@ -21,9 +21,9 @@ parcours * load_Data(char * filename)
 
   //
   int date = 0;
-  double lat,lon;
+  double lat,lon = 0.0;
+  double truc = 0.0;
   //
-
   file = fopen(filename, "r");
   if(file == NULL)
   {
@@ -33,10 +33,14 @@ parcours * load_Data(char * filename)
   int retour; 
   //while(retour = fscanf(file, "date:%d,lat:%lf,long:%lf;\n", &date, &lat, &lon) )
   rewind(file);
-  while(fscanf(file, "%s", &test) == 1)
+  while(fscanf(file, "%s", test) == 1)
   {
-    printf("%s \n", test );
-    sscanf(test, "date:%d,lat:%lf,long:%lf;\n", &date, &lat, &lon);
+    printf("Ligne: %s \n", test );
+    printf("Date: %i \n", date);
+    printf("Long: %lf \n", lon);
+    sscanf(test, "date:%d,lat:%lf,long:%lf;", &date, &lat, &lon);
+    printf("Date: %i \n", date);
+    printf("Long: %f \n", lon);
     printf("%d--\n", date);
      printf("%lf--\n", lat);
     printf("%lf--\n", lon);
