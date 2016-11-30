@@ -11,45 +11,21 @@
 #include "graphic.h"
 #include <unistd.h>
 
+static parcours * original_data;
 
-parcours * load_Data(char * filename)
+void load_Data(char * filename)
 {
-  FILE* file;
-  parcours * list;
-  char test[50];
-  int nbchar;
 
-  //
-  int date = 0;
-  double lat,lon = 0.0;
-  double truc = 0.0;
-  //
+  FILE* file;
   file = fopen(filename, "r");
   if(file == NULL)
   {
      perror("Fail open data");
      exit(EXIT_FAILURE);
   }
-  int retour; 
-  //while(retour = fscanf(file, "date:%d,lat:%lf,long:%lf;\n", &date, &lat, &lon) )
-  rewind(file);
-  while(fscanf(file, "%s", test) == 1)
-  {
-    printf("Ligne: %s \n", test );
-    printf("Date: %i \n", date);
-    printf("Long: %lf \n", lon);
-    sscanf(test, "date:%d,lat:%lf,long:%lf;", &date, &lat, &lon);
-    printf("Date: %i \n", date);
-    printf("Long: %f \n", lon);
-    printf("%d--\n", date);
-     printf("%lf--\n", lat);
-    printf("%lf--\n", lon);
-    printf("retour %d\n",retour);
-  }
-  
+  original_data = readData(file);
    
-  fclose(file);
-  return list;  
+  fclose(file); 
 }
 
 void choose_File(GtkWidget *item, gpointer data)
@@ -58,7 +34,6 @@ void choose_File(GtkWidget *item, gpointer data)
   GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_OPEN;
   gint res;
 
-  parcours * list;
   char *filename;
 
   dialog = gtk_file_chooser_dialog_new ("Open File",
@@ -78,13 +53,14 @@ void choose_File(GtkWidget *item, gpointer data)
     GtkFileChooser *chooser = GTK_FILE_CHOOSER (dialog);
     filename = gtk_file_chooser_get_filename (chooser);
     
-    list = load_Data(filename);   
+    load_Data(filename);   
+   
     g_free (filename);
+
+    displayList(original_data);
 
   }
   gtk_widget_destroy (dialog);
-
-
   
 }
 

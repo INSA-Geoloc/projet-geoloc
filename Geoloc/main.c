@@ -66,7 +66,7 @@ void graphic(){
 
 int main(int argc, char *argv[]){
 
-/*
+
     parcours * L;
 
     dataPoint *m1,*m2,* m;
@@ -95,9 +95,9 @@ int main(int argc, char *argv[]){
     //destroyList(L);
 
     LambertToGPS(620130,6681057);
-*/
+
     traitementDonnees(); //Init structure et test
-/*
+
     GtkWidget *window;
     GtkWidget *darea;
 
@@ -131,7 +131,6 @@ int main(int argc, char *argv[]){
     gtk_main();
 
     destroyList(L);
-*/
 
     return 0;
 }
