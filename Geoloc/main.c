@@ -38,7 +38,7 @@ void traitementDonnees(){
 
     printf("Affichage d'un point d'interet:\n");
     displayData(L->next->pt);
-   
+
     printf("---- Affichage liste\n");
     displayList(L);
     printf("---- FIN LISTE\n");
@@ -48,7 +48,6 @@ void traitementDonnees(){
     fclose(data);
     destroyList(L);
 
-    LambertToGPS(620130,6681057);
 }
 
 void graphic(){
@@ -58,80 +57,80 @@ void graphic(){
      */
 
 
-    
+
 
 
 }
 
 
 int main(int argc, char *argv[]){
+    //
+    //
+    // parcours * L;
+    //
+    // dataPoint *m1,*m2,* m;
+    // FILE * data;
+    //
+    // //---lecture des données geolog-----
+    // data=fopen("geolog.txt","r");
+    //
+    // if(data == NULL){
+    //   perror("Fail open data");
+    //   exit(EXIT_FAILURE);
+    // }
+    //
+    // L=readData(data);
+    //
+    // printf("Affichage d'un point d'interet:\n");
+    // displayData(L->next->pt);
+    //
+    // printf("---- Affichage liste\n");
+    // displayList(L);
+    // printf("---- FIN LISTE\n");
+    //
+    // printf("Distance entre les 2 1ers points : %lf \n", distanceBtwnPoints(L->next->pt, L->next->next->pt));
+    //
+    // fclose(data);
+    // //destroyList(L);
+    //
+    // LambertToGPS(620130,6681057);
+    //
+    // traitementDonnees(); //Init structure et test
+    //
+    // GtkWidget *window;
+    // GtkWidget *darea;
+    //
+    // glob.count = 0;
+    //
+    // gtk_init(&argc, &argv);
+    //
+    // graphic(); //Partie graphique
+    //
+    // window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    //
+    // darea = gtk_drawing_area_new();
+    // gtk_container_add(GTK_CONTAINER(window), darea);
+    //
+    // gtk_widget_add_events(window, GDK_BUTTON_PRESS_MASK);
+    //
+    // g_signal_connect(G_OBJECT(darea), "draw", G_CALLBACK(on_draw_event), NULL);
+    // g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
+    //
+    // displayList(L);
+    //
+    // g_signal_connect(window, "button-press-event", G_CALLBACK(clicked), L);
+    //
+    //
+    // gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
+    // gtk_window_set_default_size(GTK_WINDOW(window), 600, 600);
+    // gtk_window_set_title(GTK_WINDOW(window), "Geoloc");
+    //
+    // gtk_widget_show_all(window);
+    //
+    // gtk_main();
+    //
+    // destroyList(L);
 
-
-    parcours * L;
-
-    dataPoint *m1,*m2,* m;
-    FILE * data;
-
-    //---lecture des données geolog-----
-    data=fopen("geolog.txt","r");
-
-    if(data == NULL){
-      perror("Fail open data");
-      exit(EXIT_FAILURE);
-    }
-
-    L=readData(data);
-
-    printf("Affichage d'un point d'interet:\n");
-    displayData(L->next->pt);
-   
-    printf("---- Affichage liste\n");
-    displayList(L);
-    printf("---- FIN LISTE\n");
-
-    printf("Distance entre les 2 1ers points : %lf \n", distanceBtwnPoints(L->next->pt, L->next->next->pt));
-
-    fclose(data);
-    //destroyList(L);
-
-    LambertToGPS(620130,6681057);
-
-    traitementDonnees(); //Init structure et test
-
-    GtkWidget *window;
-    GtkWidget *darea;
-
-    glob.count = 0;
-
-    gtk_init(&argc, &argv);
-
-    graphic(); //Partie graphique
-
-    window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-
-    darea = gtk_drawing_area_new();
-    gtk_container_add(GTK_CONTAINER(window), darea);
-    
-    gtk_widget_add_events(window, GDK_BUTTON_PRESS_MASK);
-
-    g_signal_connect(G_OBJECT(darea), "draw", G_CALLBACK(on_draw_event), NULL);
-    g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
-
-    displayList(L); 
-
-    g_signal_connect(window, "button-press-event", G_CALLBACK(clicked), L);
-
-
-    gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
-    gtk_window_set_default_size(GTK_WINDOW(window), 600, 600);
-    gtk_window_set_title(GTK_WINDOW(window), "Geoloc");
-
-    gtk_widget_show_all(window);
-
-    gtk_main();
-
-    destroyList(L);
-
+    GPStoLambert(47.08021694,2.40447807);
     return 0;
 }
-
