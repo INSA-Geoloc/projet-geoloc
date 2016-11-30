@@ -57,10 +57,6 @@ void graphic(){
      * Partie graphique
      */
 
-
-    
-
-
 }
 
 
@@ -96,7 +92,7 @@ int main(int argc, char *argv[]){
 
     LambertToGPS(620130,6681057);
 
-    traitementDonnees(); //Init structure et test
+    //traitementDonnees(); //Init structure et test
 
     GtkWidget *window;
     GtkWidget *darea;

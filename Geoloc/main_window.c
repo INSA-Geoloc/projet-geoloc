@@ -11,7 +11,7 @@
 #include "graphic.h"
 #include <unistd.h>
 
-static parcours * original_data;
+parcours * original_data;
 
 void load_Data(char * filename)
 {
@@ -57,8 +57,6 @@ void choose_File(GtkWidget *item, gpointer data)
    
     g_free (filename);
 
-    displayList(original_data);
-
   }
   gtk_widget_destroy (dialog);
   
@@ -71,6 +69,7 @@ int main(int argc, char *argv[]) {
 
   GtkWidget *window;
   GtkWidget *vbox;
+  GtkWidget *grid;
 
   GtkWidget *menubar1;
   GtkWidget *menubar2;
@@ -107,11 +106,11 @@ int main(int argc, char *argv[]) {
 
   window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
   gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
-  gtk_window_set_default_size(GTK_WINDOW(window), 300, 25);
+  gtk_window_set_default_size(GTK_WINDOW(window), 300, 150);
   gtk_window_set_title(GTK_WINDOW(window), "Geoloc");
 
   vbox = gtk_box_new(FALSE, 0);
-  gtk_container_add(GTK_CONTAINER(window), vbox);
+  //gtk_container_add(GTK_CONTAINER(window), vbox);
 
   menubar1 = gtk_menu_bar_new();
   menubar2 = gtk_menu_bar_new();
@@ -160,6 +159,29 @@ int main(int argc, char *argv[]) {
   gtk_menu_shell_append(GTK_MENU_SHELL(menubar3), animationMi);
   gtk_box_pack_start(GTK_BOX(vbox), menubar3, FALSE, FALSE, 0);
 
+  /////////////////////////////////////////////////
+  //Zone cartograĥique 
+  /////////////////////////////////////////////////	  
+
+
+  GtkWidget *darea;
+  darea = gtk_drawing_area_new();
+  gtk_widget_set_size_request (darea, 512, 512);
+
+
+  grid = gtk_grid_new();
+  gtk_container_add(GTK_CONTAINER(window), grid);
+  
+  gtk_grid_attach (GTK_GRID (grid), vbox, 0, 0, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), darea, 0, 1, 1, 1);
+
+  glob.count = 0;
+  gtk_widget_add_events(window, GDK_BUTTON_PRESS_MASK);
+
+  g_signal_connect(G_OBJECT(darea), "draw", G_CALLBACK(on_draw_event), NULL);
+  g_signal_connect(window, "button-press-event", G_CALLBACK(clicked), original_data);
+
+ //////////////////////////////////////////////////
 
   //Linkage des fonctions 
   g_signal_connect(G_OBJECT(window), "destroy",
@@ -171,8 +193,10 @@ int main(int argc, char *argv[]) {
   g_signal_connect(G_OBJECT(openMi), "activate",
         G_CALLBACK(choose_File), NULL);
 
-
   //Affichage de la fenêtre
+
+//gtk_window_maximize (GTK_WINDOW (p_window));
+
   gtk_widget_show_all(window);
 
   gtk_main();
