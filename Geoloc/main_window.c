@@ -9,30 +9,32 @@
 #include "parcours_list.h"
 #include "traitement-donnees.h"
 #include "graphic.h"
+#include <unistd.h>
 
+parcours * original_data;
 
-
-parcours * load_Data(char * filename)
+void load_Data(char * filename)
 {
-  FILE* file;
-  parcours * list;
 
+  FILE* file;
   file = fopen(filename, "r");
   if(file == NULL)
   {
      perror("Fail open data");
      exit(EXIT_FAILURE);
   }
-
-  list = readData(file);
-  return list;
+  original_data = readData(file);
+   
+  fclose(file); 
 }
 
-static void choose_File( GtkWidget *item, gpointer data)
+void choose_File(GtkWidget *item, gpointer data)
 {
   GtkWidget *dialog;
   GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_OPEN;
   gint res;
+
+  char *filename;
 
   dialog = gtk_file_chooser_dialog_new ("Open File",
                                       NULL,
@@ -44,21 +46,20 @@ static void choose_File( GtkWidget *item, gpointer data)
                                       NULL);
 
   res = gtk_dialog_run (GTK_DIALOG (dialog));
+
   if (res == GTK_RESPONSE_ACCEPT)
   {
-    parcours * data;
-    char *filename;
+    
     GtkFileChooser *chooser = GTK_FILE_CHOOSER (dialog);
     filename = gtk_file_chooser_get_filename (chooser);
     
-
-    data = load_Data(filename);
-    displayList(data);
-    
+    load_Data(filename);   
+   
     g_free (filename);
-  }
 
+  }
   gtk_widget_destroy (dialog);
+  
 }
 
 
@@ -68,6 +69,7 @@ int main(int argc, char *argv[]) {
 
   GtkWidget *window;
   GtkWidget *vbox;
+  GtkWidget *grid;
 
   GtkWidget *menubar1;
   GtkWidget *menubar2;
@@ -104,11 +106,11 @@ int main(int argc, char *argv[]) {
 
   window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
   gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
-  gtk_window_set_default_size(GTK_WINDOW(window), 300, 200);
+  gtk_window_set_default_size(GTK_WINDOW(window), 300, 150);
   gtk_window_set_title(GTK_WINDOW(window), "Geoloc");
 
   vbox = gtk_box_new(FALSE, 0);
-  gtk_container_add(GTK_CONTAINER(window), vbox);
+  //gtk_container_add(GTK_CONTAINER(window), vbox);
 
   menubar1 = gtk_menu_bar_new();
   menubar2 = gtk_menu_bar_new();
@@ -157,6 +159,29 @@ int main(int argc, char *argv[]) {
   gtk_menu_shell_append(GTK_MENU_SHELL(menubar3), animationMi);
   gtk_box_pack_start(GTK_BOX(vbox), menubar3, FALSE, FALSE, 0);
 
+  /////////////////////////////////////////////////
+  //Zone cartograĥique 
+  /////////////////////////////////////////////////	  
+
+
+  GtkWidget *darea;
+  darea = gtk_drawing_area_new();
+  gtk_widget_set_size_request (darea, 512, 512);
+
+
+  grid = gtk_grid_new();
+  gtk_container_add(GTK_CONTAINER(window), grid);
+  
+  gtk_grid_attach (GTK_GRID (grid), vbox, 0, 0, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), darea, 0, 1, 1, 1);
+
+  glob.count = 0;
+  gtk_widget_add_events(window, GDK_BUTTON_PRESS_MASK);
+
+  g_signal_connect(G_OBJECT(darea), "draw", G_CALLBACK(on_draw_event), NULL);
+  g_signal_connect(window, "button-press-event", G_CALLBACK(clicked), original_data);
+
+ //////////////////////////////////////////////////
 
   //Linkage des fonctions 
   g_signal_connect(G_OBJECT(window), "destroy",
@@ -168,8 +193,10 @@ int main(int argc, char *argv[]) {
   g_signal_connect(G_OBJECT(openMi), "activate",
         G_CALLBACK(choose_File), NULL);
 
-
   //Affichage de la fenêtre
+
+//gtk_window_maximize (GTK_WINDOW (p_window));
+
   gtk_widget_show_all(window);
 
   gtk_main();
