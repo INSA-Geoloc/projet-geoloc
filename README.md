@@ -3,7 +3,7 @@
 projet-geoloc
 =============
 
- [x] Fait
+ - [x] Fait
     - [x] Conversion Lambert -> Degrés Décimaux ( A préciser )
     - [x] Structure Point et son parcours
     - [x] Prise en Main GTK ( Affichage point, tracés, et cercle sur une image )
