@@ -1,15 +1,19 @@
-# projet-geoloc
-- [x] Fait
-    - [x] Conversion Lambert -> Degrés Décimaux ( A préciser )
-    - [x] Structure Point et son parcours
-    - [x] Prise en Main GTK ( Affichage point, tracés, et cercle sur une image )
-- [ ] En cours 
-    - [ ] Amélioration de la précision de la conversion
-    - [ ] Traitement de la base IGN
-    - [ ] Algorithmes de traitement ( Anonymisation etc...)
-          - [ ] Calcul cercle à partir de la densité de population
-    - [ ] Integration de l'interface graphique (3ème guerre mondiale) 
-- [ ] A Faire plus tard 
-    - [ ] Integration "Finale" partie Traitement et Graphique
-    - [ ] Affichage des points d'intérêts avec la base d'adresse 
-    - [ ] item 2-3
+
+
+
+## Objectif Equipe traitement ##
+
+ 1. Anonymisation, en fonction d'une distance
+ 2. Modifier la fonction qui lit le fichier du téléphone pour sortir une collection de point en lambert
+ 3. Sortir les centres d'interet
+ 4. distance entre point
+ 5. régression linéaire
+ 6. Calcul du rayon du cercle en fonction de la population locale
+
+
+----------
+
+
+## Objectifs équipe graphique ##
+
+1. Visualisation dynamique (en fonction du temps)
