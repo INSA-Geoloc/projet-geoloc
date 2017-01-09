@@ -45,10 +45,12 @@ void traitementDonnees(){
 
     printf("Distance entre les 2 1ers points : %lf \n", distanceBtwnPoints(L->next->pt, L->next->next->pt));
 
+
+
     fclose(data);
     destroyList(L);
 
-    LambertToGPS(620130,6681057);
+    //LambertToGPS(620130,6681057);
 }
 
 void graphic(){
@@ -68,7 +70,7 @@ int main(int argc, char *argv[]){
 
     parcours * L;
 
-    dataPoint *m1,*m2,* m;
+    dataPoint *m1, *m2, *m;
     FILE * data;
 
     //---lecture des données geolog-----
@@ -90,10 +92,19 @@ int main(int argc, char *argv[]){
 
     printf("Distance entre les 2 1ers points : %lf \n", distanceBtwnPoints(L->next->pt, L->next->next->pt));
 
+    printf("Test adapt 1er pt\n");
+    adaptLocation(L->next->pt->longitude, L->next->pt->latitude);
+    printf("Adapt 2 2eme point \n");
+    adaptLocation(L->next->next->pt->longitude, L->next->next->pt->latitude);
+
     fclose(data);
     //destroyList(L);
 
-    LambertToGPS(620130,6681057);
+    //LambertToGPS(620130,6681057);
+
+    m1 = newPoint(0, 47.087869, 2.382652);
+
+    setPosition(L->next->next->pt, m1);
 
     //traitementDonnees(); //Init structure et test
 

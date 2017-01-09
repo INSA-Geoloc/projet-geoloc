@@ -15,7 +15,7 @@
  * @param lat latitude
  * @return structure point
  */
-dataPoint* newPoint(int t,double longi, double lat){
+dataPoint* newPoint(int t,double lat, double longi){
   dataPoint * temp = (dataPoint *) malloc(sizeof(dataPoint));
   temp->time = t;
   temp->longitude = longi;
@@ -95,6 +95,19 @@ double distanceBtwnPoints(dataPoint * d1, dataPoint * d2){
    return d;
 
 }
+
+/**
+ * @brief Calcul de position X et Y a partir d'une position de reference
+ * @param d1 structure point
+ * @param d2 structure point
+ */
+void setPosition(dataPoint * dp, dataPoint * dref){
+    printf("Lat 13 : %lf long 13 : %lf\n", dp->latitude, dp->longitude);
+    printf("Lat 2 : %lf long 2 : %lf\n", dref->latitude, dref->longitude);
+
+    
+}
+
 
 /**
  * @brief Destruction d'un point

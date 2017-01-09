@@ -49,7 +49,7 @@ void do_drawing(cairo_t *cr)
     cairo_stroke(cr);
 }
 
-gboolean setPoint(GtkWidget *widget, double xp, double yp){
+gboolean setPoint(GtkWidget *widget, double xp, double yp, int isLambert){
     cairo_t *cr;
 
     cr = gdk_cairo_create(gtk_widget_get_window(widget));
@@ -59,7 +59,30 @@ gboolean setPoint(GtkWidget *widget, double xp, double yp){
     cairo_close_path(cr);
 
     cairo_set_line_width(cr, 2.0); //Border weight
-    cairo_set_source_rgba(cr, 1, 0.2, 0.2, 0.8); //Fill colo
+
+    if(isLambert){
+        printf("Cest du lambert %lf / %lf\n", xp, yp);
+        /*Ref sur la carte en x,y*/
+        double xRef = 20;
+        double yRef = 20;
+
+        double xLRef = 340;
+        double yLRef = 450;
+
+        double tmpX = (xRef * xp)/xLRef;
+        double tmpY = (yRef * yp)/yLRef;
+
+        xp = tmpX;
+        yp = tmpY;
+
+        cairo_set_source_rgba(cr, 1, 0.8, 0.8, 1); //Fill colo
+
+        
+    }
+    else{
+        cairo_set_source_rgba(cr, 1, 0.2, 0.2, 1); //Fill colo
+    }
+
     cairo_fill_preserve(cr);
     cairo_set_source_rgba(cr, 0, 0, 0, 0.8); //Border color
 
@@ -94,69 +117,7 @@ gboolean setCircle(GtkWidget *widget, double xc, double yc, double taille){
     cairo_destroy(cr);
 
     return TRUE;
-}
-
-gboolean setTest(GtkWidget *widget){
-		cairo_surface_t *surface =
-            cairo_image_surface_create(CAIRO_FORMAT_ARGB32, 500, 500);
-        cairo_t *cr =
-            cairo_create(surface);
-
-        /*cairo_select_font_face (cr, "serif", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
-        cairo_set_font_size (cr, 32.0);
-        cairo_set_source_rgb (cr, 0.0, 0.0, 1.0);
-        cairo_move_to (cr, 10.0, 50.0);
-        cairo_show_text (cr, "Hello, world");*/
-
-        /*double radius = 100;
-	    double angle1 = 0  * (M_PI/180.0);  // angles are specified 
-	    double angle2 = 360.0 * (M_PI/180.0);  // in radians 
-
-	    cairo_set_line_width (cr, 10.0);
-	    cairo_arc (cr, 100, 100, radius, angle1, angle2);
-
-	    cairo_close_path (cr);
-
-	    cairo_set_line_width (cr, 5.0); //Border wight
-	    cairo_set_source_rgba (cr, 1, 0.2, 0.2, 0.2); //Fill colo
-	    cairo_fill_preserve (cr);
-	    cairo_set_source_rgba (cr, 1, 0.2, 0.2, 0.8); //Border color
-
-
-	    setCircle(widget, 234, 176, 100);
-
-	    cairo_stroke (cr);
-
-	    printf("Ca test\n");
-
-        cairo_destroy (cr);
-        cairo_surface_destroy(surface);*/
-
-            //black background
-        cairo_set_source_rgb(cr, 0, 0, 0);
-        cairo_paint(cr);
-
-        // Redirect drawing to a temporary surface
-        cairo_push_group(cr);
-
-        //blue text
-        cairo_set_source_rgb(cr, 0, 0, 1);
-        cairo_set_font_size(cr, 50);
-        cairo_move_to(cr, 75, 160);
-        cairo_text_path(cr, "foobar");
-        cairo_fill(cr);
-
-        // Draw part of the blue text
-        cairo_pop_group_to_source(cr);
-        cairo_rectangle(cr, 125, 125, 50, 50);
-        cairo_fill(cr);
-
-        cairo_destroy (cr);
-        cairo_surface_write_to_png (surface, "output.png");
-        cairo_surface_destroy (surface);
-
-        return TRUE;
-}
+} 
 
 gboolean setPath(GtkWidget *widget, parcours* lp){
 		parcours * tmp = lp->next;
@@ -166,18 +127,20 @@ gboolean setPath(GtkWidget *widget, parcours* lp){
     	cr = gdk_cairo_create(gtk_widget_get_window(widget));
 
   		while(tmp->pt != NULL){
-      		setPoint(widget, tmp->pt->longitude, tmp->pt->latitude);
 
-		    cairo_move_to(cr, tmp->pt->longitude, tmp->pt->latitude);
-		    if(tmp->next) cairo_line_to(cr, tmp->next->pt->longitude, tmp->next->pt->latitude); else break;
-		    cairo_stroke(cr);
 
-		    setPoint(widget, tmp->pt->longitude, tmp->pt->latitude); //Hack point au dessus des lignes
+            setPoint(widget, tmp->pt->longitude, tmp->pt->latitude, 0);
 
-		    if(tmp->next) setPoint(widget, tmp->next->pt->longitude, tmp->next->pt->latitude); else break;
+            cairo_move_to(cr, tmp->pt->longitude, tmp->pt->latitude);
+            if(tmp->next) cairo_line_to(cr, tmp->next->pt->longitude, tmp->next->pt->latitude); else break;
+            cairo_stroke(cr);
 
-      		if(tmp->next) tmp = tmp->next; else break;
-  		}
+            setPoint(widget, tmp->pt->longitude, tmp->pt->latitude, 1); //Hack point au dessus des lignes
+
+            if(tmp->next) setPoint(widget, tmp->next->pt->longitude, tmp->next->pt->latitude, 0); else break;
+
+            if(tmp->next) tmp = tmp->next; else break;
+        }
 
 }
 
@@ -264,26 +227,26 @@ gboolean clicked(GtkWidget *widget, GdkEventButton *event, gpointer user_data)
 
     //Parcours
     //setPoint(widget, 120, 120);
-    cairo_set_line_width (cr, 4.0);
+    /*cairo_set_line_width (cr, 4.0);
     cairo_set_source_rgba (cr, 1, 0.2, 0.2, 0.8);
 
-    setPoint(widget, 0, 0);
+    setPoint(widget, 0, 0, 0);
 
     cairo_move_to(cr, 0, 0);
     cairo_line_to(cr, 120, 120);
     cairo_stroke(cr);
 
-    setPoint(widget, 120, 120);
+    setPoint(widget, 120, 120, 0);
 
     cairo_move_to(cr, 120, 120); //Pt depart
     cairo_line_to(cr, 256, 0); //Pt arrivee (direction) translation horizontal + translation vertical
 
-    setPoint(widget, 256, 0);
+    setPoint(widget, 256, 0, 0);
 
     cairo_move_to(cr, 256, 0);
     cairo_line_to(cr, 234, 176);
 
-    setPoint(widget, 234, 176);
+    setPoint(widget, 234, 176, 0);
 
     setCircle(widget, 234, 176, 100);
 
@@ -308,7 +271,7 @@ gboolean clicked(GtkWidget *widget, GdkEventButton *event, gpointer user_data)
 	y=176;
 
 	cairo_move_to (cr, x,y);
-	cairo_show_text (cr, utf8);
+	cairo_show_text (cr, utf8);*/
 
 	cairo_destroy(cr);
 
@@ -318,5 +281,20 @@ gboolean clicked(GtkWidget *widget, GdkEventButton *event, gpointer user_data)
 
 void enter_button(GtkWidget *widget, gpointer data) {
 	printf("Mon test\n");
+}
+
+void adaptLocation(double xL, double latitude){
+    double x, y, bx, by;
+    double r  = 6371000;
+    double cx = 0;
+    double cy = 0;
+
+
+
+
+
+    x = r*sin(latitude)*cos(xL);
+    y = r*sin(latitude)*sin(latitude); 
+    printf("X : %lf | Y : %lf \n", x, y);
 }
 
