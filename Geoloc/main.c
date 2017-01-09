@@ -37,10 +37,10 @@ void traitementDonnees(){
     L=readData(data);
 
     printf("Affichage d'un point d'interet:\n");
-    displayData(L->next->pt);
+    //displayData(L->next->pt);
    
     printf("---- Affichage liste\n");
-    displayList(L);
+    //displayList(L);
     printf("---- FIN LISTE\n");
 
     printf("Distance entre les 2 1ers points : %lf \n", distanceBtwnPoints(L->next->pt, L->next->next->pt));
@@ -84,7 +84,7 @@ int main(int argc, char *argv[]){
     L=readData(data);
 
     printf("Affichage d'un point d'interet:\n");
-    displayData(L->next->pt);
+    //displayData(L->next->pt);
    
     printf("---- Affichage liste\n");
     displayList(L);
