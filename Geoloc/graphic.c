@@ -178,12 +178,12 @@ gboolean setPath(GtkWidget *widget, parcours* lp){
 
       		if(tmp->next) tmp = tmp->next; else break;
   		}
+  		cairo_destroy(cr);
 
 }
 
 gboolean clicked(GtkWidget *widget, GdkEventButton *event, gpointer user_data)
 {
-
 	cairo_t *cr;
 
     cr = gdk_cairo_create (gtk_widget_get_window (widget));
@@ -206,8 +206,7 @@ gboolean clicked(GtkWidget *widget, GdkEventButton *event, gpointer user_data)
     cairo_scale(cr, 1.55, 1.55); //Trouver le bon calcul à chaque fois
 
     (parcours*) user_data;
-
-    setPath(widget, (parcours*) user_data);
+   	setPath(widget, (parcours*) user_data);
 
     /*parcours * L;
     FILE * data;

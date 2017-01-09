@@ -12,6 +12,8 @@
 #include <unistd.h>
 
 parcours * original_data;
+GtkWidget *darea;
+
 
 void load_Data(char * filename)
 {
@@ -25,7 +27,7 @@ void load_Data(char * filename)
   }
   original_data = readData(file);
    
-  fclose(file); 
+  fclose(file);
 }
 
 void choose_File(GtkWidget *item, gpointer data)
@@ -59,7 +61,7 @@ void choose_File(GtkWidget *item, gpointer data)
 
   }
   gtk_widget_destroy (dialog);
-  
+  setPath(darea, original_data);
 }
 
 
@@ -164,7 +166,7 @@ int main(int argc, char *argv[]) {
   /////////////////////////////////////////////////	  
 
 
-  GtkWidget *darea;
+  //GtkWidget *darea;
   darea = gtk_drawing_area_new();
   gtk_widget_set_size_request (darea, 512, 512);
 
