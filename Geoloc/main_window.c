@@ -13,7 +13,49 @@
 
 parcours * original_data;
 GtkWidget *darea;
+GtkWidget *window;
 
+void on_data_loaded()
+{
+  GtkResponseType result;
+  /*
+  GtkWidget *mywindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+  gtk_window_set_position(GTK_WINDOW(mywindow), GTK_WIN_POS_CENTER);
+  gtk_window_set_default_size(GTK_WINDOW(mywindow), 300, 150);
+  gtk_window_set_title(GTK_WINDOW(mywindow), "Question");
+
+  gtk_widget_show_all(mywindow);
+
+  */
+  GtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT;
+  GtkWidget* dialog = gtk_message_dialog_new (window ,
+                                 flags,
+                                 GTK_MESSAGE_QUESTION,
+                                 GTK_BUTTONS_YES_NO,
+                                 "Les données ont été chargées, voulez-vous afficher les points ?");
+
+// Destroy the dialog when the user responds to it
+// (e.g. clicks a button)
+/*
+g_signal_connect_swapped (dialog, "response",
+                          G_CALLBACK (gtk_widget_destroy),
+                          dialog);
+*/
+
+  result = gtk_dialog_run(GTK_DIALOG (dialog));
+
+  gtk_widget_destroy(dialog);
+  if(result == GTK_RESPONSE_YES)
+  {
+    setPath(darea, original_data);
+    printf("yes");
+
+  }
+  else if(result == GTK_RESPONSE_NO)
+  {
+    printf("no\n");
+  }
+}
 
 void load_Data(char * filename)
 {
@@ -26,7 +68,7 @@ void load_Data(char * filename)
      exit(EXIT_FAILURE);
   }
   original_data = readData(file);
-   
+  //setPath(darea, original_data);
   fclose(file);
 }
 
@@ -51,17 +93,16 @@ void choose_File(GtkWidget *item, gpointer data)
 
   if (res == GTK_RESPONSE_ACCEPT)
   {
-    
+
     GtkFileChooser *chooser = GTK_FILE_CHOOSER (dialog);
     filename = gtk_file_chooser_get_filename (chooser);
-    
-    load_Data(filename);   
-   
-    g_free (filename);
 
+    load_Data(filename);
+
+    g_free (filename);
   }
   gtk_widget_destroy (dialog);
-  setPath(darea, original_data);
+  on_data_loaded();
 }
 
 
@@ -69,7 +110,7 @@ void choose_File(GtkWidget *item, gpointer data)
 
 int main(int argc, char *argv[]) {
 
-  GtkWidget *window;
+  //GtkWidget *window;
   GtkWidget *vbox;
   GtkWidget *grid;
 
@@ -82,7 +123,7 @@ int main(int argc, char *argv[]) {
   //Fichier
   GtkWidget *fileMenu;
   GtkWidget *fileMi;
-  
+
   //Affichage
   GtkWidget *displayMenu;
   GtkWidget *displayMi;
@@ -91,7 +132,7 @@ int main(int argc, char *argv[]) {
   GtkWidget *animationMenu;
   GtkWidget *animationMi;
 
-  //Menu niveau 2 
+  //Menu niveau 2
   //Fichier
   GtkWidget *quitMi;
   GtkWidget *openMi;
@@ -103,7 +144,7 @@ int main(int argc, char *argv[]) {
 
   //Annimations
   GtkWidget *playMi;
-  
+
   gtk_init(&argc, &argv);
 
   window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
@@ -120,7 +161,7 @@ int main(int argc, char *argv[]) {
 
   //Fichier
   fileMenu = gtk_menu_new();
-  
+
   fileMi = gtk_menu_item_new_with_label("Fichier");
   openMi = gtk_menu_item_new_with_label("Ouvrir");
   quitMi = gtk_menu_item_new_with_label("Quitter");
@@ -129,7 +170,7 @@ int main(int argc, char *argv[]) {
 
   gtk_menu_shell_append(GTK_MENU_SHELL(fileMenu), openMi);
   gtk_menu_shell_append(GTK_MENU_SHELL(fileMenu), quitMi);
-  
+
   gtk_menu_shell_append(GTK_MENU_SHELL(menubar1), fileMi);
 
   gtk_box_pack_start(GTK_BOX(vbox), menubar1, FALSE, FALSE, 0);
@@ -148,7 +189,7 @@ int main(int argc, char *argv[]) {
   gtk_menu_shell_append(GTK_MENU_SHELL(displayMenu), cercleAnonymatDisplayMi);
 
   gtk_menu_shell_append(GTK_MENU_SHELL(menubar2), displayMi);
-  
+
   gtk_box_pack_start(GTK_BOX(vbox), menubar2, FALSE, FALSE, 0);
 
   //Animations
@@ -162,8 +203,8 @@ int main(int argc, char *argv[]) {
   gtk_box_pack_start(GTK_BOX(vbox), menubar3, FALSE, FALSE, 0);
 
   /////////////////////////////////////////////////
-  //Zone cartograĥique 
-  /////////////////////////////////////////////////	  
+  //Zone cartograĥique
+  /////////////////////////////////////////////////
 
 
   //GtkWidget *darea;
@@ -173,7 +214,7 @@ int main(int argc, char *argv[]) {
 
   grid = gtk_grid_new();
   gtk_container_add(GTK_CONTAINER(window), grid);
-  
+
   gtk_grid_attach (GTK_GRID (grid), vbox, 0, 0, 1, 1);
   gtk_grid_attach (GTK_GRID (grid), darea, 0, 1, 1, 1);
 
@@ -185,7 +226,7 @@ int main(int argc, char *argv[]) {
 
  //////////////////////////////////////////////////
 
-  //Linkage des fonctions 
+  //Linkage des fonctions
   g_signal_connect(G_OBJECT(window), "destroy",
         G_CALLBACK(gtk_main_quit), NULL);
 

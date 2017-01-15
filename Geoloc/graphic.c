@@ -77,7 +77,7 @@ gboolean setPoint(GtkWidget *widget, double xp, double yp, int isLambert){
 
         cairo_set_source_rgba(cr, 1, 0.8, 0.8, 1); //Fill colo
 
-        
+
     }
     else{
         cairo_set_source_rgba(cr, 1, 0.2, 0.2, 1); //Fill colo
@@ -99,8 +99,8 @@ gboolean setCircle(GtkWidget *widget, double xc, double yc, double taille){
     cr = gdk_cairo_create(gtk_widget_get_window (widget));
 
     double radius = taille;
-    double angle1 = 0  * (M_PI/180.0);  // angles are specified 
-    double angle2 = 360.0 * (M_PI/180.0);  // in radians 
+    double angle1 = 0  * (M_PI/180.0);  // angles are specified
+    double angle2 = 360.0 * (M_PI/180.0);  // in radians
 
     cairo_set_line_width(cr, 10.0);
     cairo_arc(cr, xc, yc, radius, angle1, angle2);
@@ -117,7 +117,7 @@ gboolean setCircle(GtkWidget *widget, double xc, double yc, double taille){
     cairo_destroy(cr);
 
     return TRUE;
-} 
+}
 
 gboolean setPath(GtkWidget *widget, parcours* lp){
 		parcours * tmp = lp->next;
@@ -125,7 +125,7 @@ gboolean setPath(GtkWidget *widget, parcours* lp){
 		cairo_t *cr;
 
     	cr = gdk_cairo_create(gtk_widget_get_window(widget));
-
+  
   		while(tmp->pt != NULL){
 
 
@@ -188,7 +188,7 @@ gboolean clicked(GtkWidget *widget, GdkEventButton *event, gpointer user_data)
 
     fclose(data);
     destroyList(L);*/
-    
+
 
     /*double dashes[] = {50.0,  // ink
                    10.0,  // skip
@@ -212,8 +212,8 @@ gboolean clicked(GtkWidget *widget, GdkEventButton *event, gpointer user_data)
     /*double xc = 128.0;
     double yc = 128.0;
     double radius = 100.0;
-    double angle1 = 0  * (M_PI/180.0);  // angles are specified 
-    double angle2 = 360.0 * (M_PI/180.0);  // in radians 
+    double angle1 = 0  * (M_PI/180.0);  // angles are specified
+    double angle2 = 360.0 * (M_PI/180.0);  // in radians
 
     cairo_set_source_rgba (cr, 1, 0.2, 0.2, 0.8);
 
@@ -292,7 +292,6 @@ void adaptLocation(double xL, double latitude){
 
 
     x = r*sin(latitude)*cos(xL);
-    y = r*sin(latitude)*sin(latitude); 
+    y = r*sin(latitude)*sin(latitude);
     printf("X : %lf | Y : %lf \n", x, y);
 }
-
