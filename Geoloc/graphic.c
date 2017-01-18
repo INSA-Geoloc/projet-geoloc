@@ -159,26 +159,28 @@ gboolean clicked(GtkWidget *widget, GdkEventButton *event, gpointer user_data)
 
     cr = gdk_cairo_create (gtk_widget_get_window (widget));
 
-    printf("clicked\n");
     if (event->button == 1) {
-        glob.coordx[glob.count] = event->x;
-        glob.coordy[glob.count++] = event->y;
+        //glob.coordx[glob.count] = event->x;
+        //glob.coordy[glob.count++] = event->y;
+        printf("zoom IN\n");
     }
 
     if (event->button == 3) {
-        gtk_widget_queue_draw(widget);
-        return TRUE;
+        printf("Zoom Out\n");
+        //gtk_widget_queue_draw(widget);
+        //return TRUE;
     }
 
     //setTest(widget);
 
     //do_drawing(cr);
 
-    cairo_scale(cr, 1.55, 1.55); //Trouver le bon calcul à chaque fois
+    cairo_scale(cr, 4.55, 4.55); //Trouver le bon calcul à chaque fois -1.55, 1.55-
+    printf("test scale\n");
 
     (parcours*) user_data;
     user_data = original_data;
-   	setPath(darea, (parcours*) user_data);
+   	//setPath(darea, (parcours*) user_data);
 
     /*parcours * L;
     FILE * data;

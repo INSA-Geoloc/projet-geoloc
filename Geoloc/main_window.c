@@ -203,7 +203,7 @@ int main(int argc, char *argv[]) {
   gtk_widget_add_events(window, GDK_BUTTON_PRESS_MASK);
 
   g_signal_connect(G_OBJECT(darea), "draw", G_CALLBACK(on_draw_event), NULL);
-  //g_signal_connect(window, "button-press-event", G_CALLBACK(clicked), original_data);
+  g_signal_connect(window, "button-press-event", G_CALLBACK(clicked), original_data);
 
  //////////////////////////////////////////////////
 
