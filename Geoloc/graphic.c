@@ -22,16 +22,12 @@ gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 
 void do_drawing(cairo_t *cr)
 {
-
-printf("do drawing\n");
     // HACK JFL: image draw test
     int w, h;
     cairo_surface_t *image;
 
     cairo_set_source_rgb(cr, 0, 0, 0);
     //cairo_set_line_width(cr, 0.5);
-
-
 
     image = cairo_image_surface_create_from_png ("france_wikipedia.png");
     w = cairo_image_surface_get_width (image);

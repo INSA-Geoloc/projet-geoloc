@@ -225,5 +225,8 @@ int main(int argc, char *argv[]) {
 
   gtk_main();
 
+  int restmp = gtk_check_menu_item_get_active (routesDisplayMi);
+  	printf("<<<<<%d>>>>>>\n", restmp );
+
   return 0;
 }
