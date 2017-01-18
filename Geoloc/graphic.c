@@ -9,6 +9,10 @@
 #include "traitement-donnees.h"
 #include "graphic.h"
 
+extern parcours * original_data;
+extern GtkWidget *darea;
+extern int affichageDesPoints;
+
 gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 {
     do_drawing(cr);
@@ -19,6 +23,7 @@ gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 void do_drawing(cairo_t *cr)
 {
 
+printf("do drawing\n");
     // HACK JFL: image draw test
     int w, h;
     cairo_surface_t *image;
@@ -46,6 +51,10 @@ void do_drawing(cairo_t *cr)
     }
 
     glob.count = 0;
+    if(original_data != NULL && affichageDesPoints == 1)
+    {
+    	setPath(darea, original_data);
+    }
     cairo_stroke(cr);
 }
 
@@ -140,7 +149,7 @@ gboolean setPath(GtkWidget *widget, parcours* lp){
             if(tmp->next) setPoint(widget, tmp->next->pt->longitude, tmp->next->pt->latitude, 0); else break;
 
             if(tmp->next) tmp = tmp->next; else break;
-        }
+}
 
 }
 
@@ -163,12 +172,13 @@ gboolean clicked(GtkWidget *widget, GdkEventButton *event, gpointer user_data)
 
     //setTest(widget);
 
-    do_drawing(cr);
+    //do_drawing(cr);
 
     cairo_scale(cr, 1.55, 1.55); //Trouver le bon calcul à chaque fois
 
     (parcours*) user_data;
-   	setPath(widget, (parcours*) user_data);
+    user_data = original_data;
+   	setPath(darea, (parcours*) user_data);
 
     /*parcours * L;
     FILE * data;
@@ -189,8 +199,8 @@ gboolean clicked(GtkWidget *widget, GdkEventButton *event, gpointer user_data)
     fclose(data);
     destroyList(L);*/
 
-
-    /*double dashes[] = {50.0,  // ink
+    /*
+    double dashes[] = {50.0,  // ink
                    10.0,  // skip
                    10.0,  // ink
                    10.0   // skip
@@ -206,10 +216,10 @@ gboolean clicked(GtkWidget *widget, GdkEventButton *event, gpointer user_data)
     cairo_rel_line_to (cr, -102.4, 0.0);
     cairo_curve_to (cr, 51.2, 230.4, 51.2, 128.0, 128.0, 128.0);
 
-    cairo_stroke (cr);*/
+    cairo_stroke (cr);
 
     //Cercle
-    /*double xc = 128.0;
+    double xc = 128.0;
     double yc = 128.0;
     double radius = 100.0;
     double angle1 = 0  * (M_PI/180.0);  // angles are specified
@@ -221,11 +231,11 @@ gboolean clicked(GtkWidget *widget, GdkEventButton *event, gpointer user_data)
     cairo_arc (cr, xc, yc, radius, angle1, angle2);
 
     cairo_stroke (cr);
-    */
+    
 
     //Parcours
     //setPoint(widget, 120, 120);
-    /*cairo_set_line_width (cr, 4.0);
+    cairo_set_line_width (cr, 4.0);
     cairo_set_source_rgba (cr, 1, 0.2, 0.2, 0.8);
 
     setPoint(widget, 0, 0, 0);
@@ -270,7 +280,7 @@ gboolean clicked(GtkWidget *widget, GdkEventButton *event, gpointer user_data)
 
 	cairo_move_to (cr, x,y);
 	cairo_show_text (cr, utf8);*/
-
+	
 	cairo_destroy(cr);
 
 

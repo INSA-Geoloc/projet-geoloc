@@ -11,22 +11,16 @@
 #include "graphic.h"
 #include <unistd.h>
 
-parcours * original_data;
+parcours * original_data = NULL;
 GtkWidget *darea;
 GtkWidget *window;
+int affichageDesPoints = 0; //Variable booléene, 0 = les données de "original_data" sont affichées\
+												1 = les données de "original_data sont affcihées"
+
 
 void on_data_loaded()
 {
   GtkResponseType result;
-  /*
-  GtkWidget *mywindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-  gtk_window_set_position(GTK_WINDOW(mywindow), GTK_WIN_POS_CENTER);
-  gtk_window_set_default_size(GTK_WINDOW(mywindow), 300, 150);
-  gtk_window_set_title(GTK_WINDOW(mywindow), "Question");
-
-  gtk_widget_show_all(mywindow);
-
-  */
   GtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT;
   GtkWidget* dialog = gtk_message_dialog_new (window ,
                                  flags,
@@ -34,26 +28,16 @@ void on_data_loaded()
                                  GTK_BUTTONS_YES_NO,
                                  "Les données ont été chargées, voulez-vous afficher les points ?");
 
-// Destroy the dialog when the user responds to it
-// (e.g. clicks a button)
-/*
-g_signal_connect_swapped (dialog, "response",
-                          G_CALLBACK (gtk_widget_destroy),
-                          dialog);
-*/
-
   result = gtk_dialog_run(GTK_DIALOG (dialog));
 
   gtk_widget_destroy(dialog);
   if(result == GTK_RESPONSE_YES)
   {
-    setPath(darea, original_data);
-    printf("yes");
-
+    affichageDesPoints = 1;
   }
   else if(result == GTK_RESPONSE_NO)
   {
-    printf("no\n");
+   	affichageDesPoints = 0; 
   }
 }
 
@@ -68,7 +52,6 @@ void load_Data(char * filename)
      exit(EXIT_FAILURE);
   }
   original_data = readData(file);
-  //setPath(darea, original_data);
   fclose(file);
 }
 
@@ -104,8 +87,6 @@ void choose_File(GtkWidget *item, gpointer data)
   gtk_widget_destroy (dialog);
   on_data_loaded();
 }
-
-
 
 
 int main(int argc, char *argv[]) {
@@ -149,7 +130,7 @@ int main(int argc, char *argv[]) {
 
   window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
   gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
-  gtk_window_set_default_size(GTK_WINDOW(window), 300, 150);
+  gtk_window_set_default_size(GTK_WINDOW(window), 1500, 1500);
   gtk_window_set_title(GTK_WINDOW(window), "Geoloc");
 
   vbox = gtk_box_new(FALSE, 0);
@@ -222,7 +203,7 @@ int main(int argc, char *argv[]) {
   gtk_widget_add_events(window, GDK_BUTTON_PRESS_MASK);
 
   g_signal_connect(G_OBJECT(darea), "draw", G_CALLBACK(on_draw_event), NULL);
-  g_signal_connect(window, "button-press-event", G_CALLBACK(clicked), original_data);
+  //g_signal_connect(window, "button-press-event", G_CALLBACK(clicked), original_data);
 
  //////////////////////////////////////////////////
 
