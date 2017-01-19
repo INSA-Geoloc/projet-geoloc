@@ -18,6 +18,35 @@ int affichageDesPoints = 0; //Variable booléene, 0 = les données de "original_
 												1 = les données de "original_data sont affcihées"
 
 
+//Sous menu
+GtkWidget *pointsDisplayMi;
+
+
+void pointsDisplayMiEvent (GtkWidget *widget, gpointer *data)
+{
+	int isactive = gtk_check_menu_item_get_active(data);
+  //Si on active l'affichage des points et que des données ont été chargées
+  if(isactive == 1 && original_data != NULL)
+    affichageDesPoints = 1;
+  //Si on active l'affichage des loints mais que aucune données n'ont été chargées
+  else if(isactive == 1 && original_data == NULL)
+  {
+    GtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT;
+    GtkWidget* dialog = gtk_message_dialog_new (window ,
+                                   flags,
+                                   GTK_MESSAGE_INFO,
+                                   GTK_BUTTONS_OK,
+                                   "Impossible d'afficher les points, aucune donnée n'a été chargée");
+
+    gtk_dialog_run(GTK_DIALOG (dialog));
+    gtk_check_menu_item_set_active(pointsDisplayMi, 0);
+    gtk_widget_destroy(dialog);
+  }
+  //Si on désactive l'affichage des points
+  else
+    affichageDesPoints = 0;
+}
+
 void on_data_loaded()
 {
   GtkResponseType result;
@@ -34,10 +63,11 @@ void on_data_loaded()
   if(result == GTK_RESPONSE_YES)
   {
     affichageDesPoints = 1;
+    gtk_check_menu_item_set_active(pointsDisplayMi, 1);
   }
   else if(result == GTK_RESPONSE_NO)
   {
-   	affichageDesPoints = 0; 
+   	affichageDesPoints = 0;
   }
 }
 
@@ -81,11 +111,13 @@ void choose_File(GtkWidget *item, gpointer data)
     filename = gtk_file_chooser_get_filename (chooser);
 
     load_Data(filename);
-
     g_free (filename);
   }
-  gtk_widget_destroy (dialog);
-  on_data_loaded();
+	gtk_widget_destroy (dialog);
+	if (res == GTK_RESPONSE_ACCEPT)
+	{
+		on_data_loaded();
+	}
 }
 
 
@@ -119,6 +151,7 @@ int main(int argc, char *argv[]) {
   GtkWidget *openMi;
 
   //Affichage
+  //GtkWidget *pointsDisplayMi;
   GtkWidget *routesDisplayMi;
   GtkWidget *pointInteretDisplayMi;
   GtkWidget *cercleAnonymatDisplayMi;
@@ -159,12 +192,14 @@ int main(int argc, char *argv[]) {
   //Affichage
   displayMenu = gtk_menu_new();
   displayMi = gtk_menu_item_new_with_label("Affichage");
+  pointsDisplayMi = gtk_check_menu_item_new_with_label("Affichage des points");
   routesDisplayMi = gtk_check_menu_item_new_with_label("Affichage des routes");
   pointInteretDisplayMi = gtk_check_menu_item_new_with_label("Affichage des points d'interêts");
   cercleAnonymatDisplayMi = gtk_check_menu_item_new_with_label("Affichage des cercle d'anonymat");
 
   gtk_menu_item_set_submenu(GTK_MENU_ITEM(displayMi), displayMenu);
 
+  gtk_menu_shell_append(GTK_MENU_SHELL(displayMenu), pointsDisplayMi);
   gtk_menu_shell_append(GTK_MENU_SHELL(displayMenu), routesDisplayMi);
   gtk_menu_shell_append(GTK_MENU_SHELL(displayMenu), pointInteretDisplayMi);
   gtk_menu_shell_append(GTK_MENU_SHELL(displayMenu), cercleAnonymatDisplayMi);
@@ -217,6 +252,14 @@ int main(int argc, char *argv[]) {
   g_signal_connect(G_OBJECT(openMi), "activate",
         G_CALLBACK(choose_File), NULL);
 
+  //Cocher au demrrage affichage des routes
+  //gtk_check_menu_item_set_active(pointsDisplayMi, 1);
+  g_signal_connect (G_OBJECT (pointsDisplayMi), "toggled",
+      	G_CALLBACK (pointsDisplayMiEvent), pointsDisplayMi);
+
+
+
+
   //Affichage de la fenêtre
 
 //gtk_window_maximize (GTK_WINDOW (p_window));
@@ -224,9 +267,6 @@ int main(int argc, char *argv[]) {
   gtk_widget_show_all(window);
 
   gtk_main();
-
-  int restmp = gtk_check_menu_item_get_active (routesDisplayMi);
-  	printf("<<<<<%d>>>>>>\n", restmp );
 
   return 0;
 }

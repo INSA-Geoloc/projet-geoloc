@@ -130,7 +130,7 @@ gboolean setPath(GtkWidget *widget, parcours* lp){
 		cairo_t *cr;
 
     	cr = gdk_cairo_create(gtk_widget_get_window(widget));
-  
+
   		while(tmp->pt != NULL){
 
 
@@ -229,7 +229,7 @@ gboolean clicked(GtkWidget *widget, GdkEventButton *event, gpointer user_data)
     cairo_arc (cr, xc, yc, radius, angle1, angle2);
 
     cairo_stroke (cr);
-    
+
 
     //Parcours
     //setPoint(widget, 120, 120);
@@ -278,7 +278,7 @@ gboolean clicked(GtkWidget *widget, GdkEventButton *event, gpointer user_data)
 
 	cairo_move_to (cr, x,y);
 	cairo_show_text (cr, utf8);*/
-	
+
 	cairo_destroy(cr);
 
 
