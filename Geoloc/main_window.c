@@ -45,6 +45,8 @@ void pointsDisplayMiEvent (GtkWidget *widget, gpointer *data)
   //Si on désactive l'affichage des points
   else
     affichageDesPoints = 0;
+
+	gtk_widget_queue_draw(darea);
 }
 
 void on_data_loaded()
