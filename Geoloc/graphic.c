@@ -12,6 +12,7 @@
 extern parcours * original_data;
 extern GtkWidget *darea;
 extern int affichageDesPoints;
+extern int affichageDesRoutes;
 
 gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 {
@@ -52,7 +53,10 @@ void do_drawing(cairo_t *cr)
     glob.count = 0;
     if(original_data != NULL && affichageDesPoints == 1)
     {
-    	setPath(darea, original_data);
+        if(affichageDesRoutes == 1){
+            printf("Je veux des routes affichés\n");
+        }
+    	setPath(darea, original_data, affichageDesRoutes);
     }
     cairo_stroke(cr);
 }
@@ -127,7 +131,7 @@ gboolean setCircle(GtkWidget *widget, double xc, double yc, double taille){
     return TRUE;
 }
 
-gboolean setPath(GtkWidget *widget, parcours* lp){
+gboolean setPath(GtkWidget *widget, parcours* lp, int showRoutes){
 		parcours * tmp = lp->next;
 
 		cairo_t *cr;
@@ -138,17 +142,18 @@ gboolean setPath(GtkWidget *widget, parcours* lp){
 
 
             setPoint(widget, tmp->pt->longitude, tmp->pt->latitude, 0);
+            if(showRoutes){
+                cairo_move_to(cr, tmp->pt->longitude, tmp->pt->latitude);
+                if(tmp->next) cairo_line_to(cr, tmp->next->pt->longitude, tmp->next->pt->latitude); else break;
+                cairo_stroke(cr);
 
-            cairo_move_to(cr, tmp->pt->longitude, tmp->pt->latitude);
-            if(tmp->next) cairo_line_to(cr, tmp->next->pt->longitude, tmp->next->pt->latitude); else break;
-            cairo_stroke(cr);
+                setPoint(widget, tmp->pt->longitude, tmp->pt->latitude, 1); //Hack point au dessus des lignes
 
-            setPoint(widget, tmp->pt->longitude, tmp->pt->latitude, 1); //Hack point au dessus des lignes
-
-            if(tmp->next) setPoint(widget, tmp->next->pt->longitude, tmp->next->pt->latitude, 0); else break;
+                if(tmp->next) setPoint(widget, tmp->next->pt->longitude, tmp->next->pt->latitude, 0); else break;
+            }
 
             if(tmp->next) tmp = tmp->next; else break;
-}
+        }
 
 }
 

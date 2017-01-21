@@ -16,7 +16,7 @@ GtkWidget *darea;
 GtkWidget *window;
 int affichageDesPoints = 0; //Variable booléene, 0 = les données de "original_data" sont affichées\
 												1 = les données de "original_data sont affcihées"
-
+int affichageDesRoutes = 0;
 
 //Sous menu
 GtkWidget *pointsDisplayMi;
@@ -47,6 +47,33 @@ void pointsDisplayMiEvent (GtkWidget *widget, gpointer *data)
     affichageDesPoints = 0;
 
 	gtk_widget_queue_draw(darea);
+}
+
+void routesDisplayMiEvent (GtkWidget *widget, gpointer *data)
+{
+  int isactive = gtk_check_menu_item_get_active(data);
+  //Si on active l'affichage des points et que des données ont été chargées
+  if(isactive == 1 && original_data != NULL)
+    affichageDesRoutes = 1;
+  //Si on active l'affichage des loints mais que aucune données n'ont été chargées
+  else if(isactive == 1 && original_data == NULL)
+  {
+    GtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT;
+    GtkWidget* dialog = gtk_message_dialog_new (window ,
+                                   flags,
+                                   GTK_MESSAGE_INFO,
+                                   GTK_BUTTONS_OK,
+                                   "Impossible d'afficher les routes, aucune donnée n'a été chargée");
+
+    gtk_dialog_run(GTK_DIALOG (dialog));
+    gtk_check_menu_item_set_active(pointsDisplayMi, 0);
+    gtk_widget_destroy(dialog);
+  }
+  //Si on désactive l'affichage des routes
+  else
+    affichageDesRoutes = 0;
+
+  gtk_widget_queue_draw(darea);
 }
 
 void on_data_loaded()
@@ -259,6 +286,9 @@ int main(int argc, char *argv[]) {
   g_signal_connect (G_OBJECT (pointsDisplayMi), "toggled",
       	G_CALLBACK (pointsDisplayMiEvent), pointsDisplayMi);
 
+  g_signal_connect (G_OBJECT (routesDisplayMi), "toggled",
+        G_CALLBACK (routesDisplayMiEvent), routesDisplayMi);
+
 
 
 
@@ -268,7 +298,7 @@ int main(int argc, char *argv[]) {
 
   gtk_widget_show_all(window);
 
-  gtk_timeout_add(1000, G_CALLBACK(testTimeout), "Test");
+  //gtk_timeout_add(1000, G_CALLBACK(testTimeout), "Test");
 
   gtk_main();
 
