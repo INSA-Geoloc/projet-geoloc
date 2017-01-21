@@ -14,6 +14,7 @@ struct {
 void do_drawing(cairo_t *);
 
 gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data);
+gboolean testTimeout(gpointer user_data);
 
 gboolean setPoint(GtkWidget *widget, double xp, double yp, int isLambert);
 

@@ -19,6 +19,9 @@ gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 
     return FALSE;
 }
+gboolean testTimeout(gpointer user_data){
+    printf("Je suis appele\n");
+}
 
 void do_drawing(cairo_t *cr)
 {

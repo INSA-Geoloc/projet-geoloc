@@ -223,6 +223,8 @@ int main(int argc, char *argv[]) {
 
   gtk_widget_show_all(window);
 
+  gtk_timeout_add(1000, G_CALLBACK(testTimeout), "Test");
+
   gtk_main();
 
   int restmp = gtk_check_menu_item_get_active (routesDisplayMi);
