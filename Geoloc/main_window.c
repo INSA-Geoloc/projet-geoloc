@@ -24,6 +24,7 @@ menuFilters filters;
 
 //Sous menu
 GtkWidget *pointsDisplayMi;
+GtkWidget *routesDisplayMi;
 
 
 void pointsDisplayMiEvent (GtkWidget *widget, gpointer *data)
@@ -49,6 +50,7 @@ void pointsDisplayMiEvent (GtkWidget *widget, gpointer *data)
   //Si on désactive l'affichage des points
   else {
     filters.displayPoints = 0;
+		gtk_check_menu_item_set_active(routesDisplayMi, 0);
   }
 
 	gtk_widget_queue_draw(darea);
@@ -59,7 +61,11 @@ void routesDisplayMiEvent (GtkWidget *widget, gpointer *data)
   int isactive = gtk_check_menu_item_get_active(data);
   //Si on active l'affichage des routes et que des données ont été chargées
   if(isactive == 1 && original_data != NULL){
+		//Si on affiche les routes on affiche aussi les points et donc coche la checkbox "affichage des points"
+		filters.displayPoints = 1;
+		gtk_check_menu_item_set_active(pointsDisplayMi, 1);
     filters.displayRoutes = 1;
+
   }
   //Si on active l'affichage des routes mais que aucune données n'ont été chargées
   else if(isactive == 1 && original_data == NULL)
@@ -72,7 +78,7 @@ void routesDisplayMiEvent (GtkWidget *widget, gpointer *data)
                                    "Impossible d'afficher les routes, aucune donnée n'a été chargée");
 
     gtk_dialog_run(GTK_DIALOG (dialog));
-    gtk_check_menu_item_set_active(pointsDisplayMi, 0);
+    gtk_check_menu_item_set_active(routesDisplayMi, 0);
     gtk_widget_destroy(dialog);
   }
   //Si on désactive l'affichage des routes
@@ -204,7 +210,7 @@ int main(int argc, char *argv[]) {
 
   //Affichage
   //GtkWidget *pointsDisplayMi;
-  GtkWidget *routesDisplayMi;
+  //GtkWidget *routesDisplayMi;
   GtkWidget *pointInteretDisplayMi;
   GtkWidget *cercleAnonymatDisplayMi;
 
@@ -217,7 +223,7 @@ int main(int argc, char *argv[]) {
   gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
   gtk_window_set_default_size(GTK_WINDOW(window), 500, 500);
   gtk_window_set_title(GTK_WINDOW(window), "Geoloc");
-    
+
 
   vbox = gtk_box_new(FALSE, 0);
   //gtk_container_add(GTK_CONTAINER(window), vbox);
@@ -284,7 +290,7 @@ int main(int argc, char *argv[]) {
   grid = gtk_grid_new();
   //Ajout
   /*swindow = gtk_scrolled_window_new (NULL,NULL); //De bae valeur à modifier
-  viewport = gtk_viewport_new (NULL,NULL); //De base valeur par défaut ce sont les valeurs à modifier 
+  viewport = gtk_viewport_new (NULL,NULL); //De base valeur par défaut ce sont les valeurs à modifier
 
   gtk_container_add (GTK_CONTAINER(viewport), darea);
   gtk_container_add (GTK_CONTAINER(swindow), viewport);
