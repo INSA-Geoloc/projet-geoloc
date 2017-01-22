@@ -14,9 +14,12 @@
 parcours * original_data = NULL;
 GtkWidget *darea;
 GtkWidget *window;
-int affichageDesPoints = 0; //Variable booléene, 0 = les données de "original_data" sont affichées\
-												1 = les données de "original_data sont affcihées"
-int affichageDesRoutes = 0;
+/*
+* Structure pour les filtres tous les filters sont implémentés dans graphic.h
+* Toutes les valeurs sont initialisés à 0 par défaut
+* Fonctionnement booléen : 0 les données ne sont pas à afficher | 1 les données sont à afficher
+*/
+menuFilters filters;
 
 //Sous menu
 GtkWidget *pointsDisplayMi;
@@ -27,7 +30,7 @@ void pointsDisplayMiEvent (GtkWidget *widget, gpointer *data)
 	int isactive = gtk_check_menu_item_get_active(data);
   //Si on active l'affichage des points et que des données ont été chargées
   if(isactive == 1 && original_data != NULL)
-    affichageDesPoints = 1;
+    filters.displayPoints = 1;
   //Si on active l'affichage des loints mais que aucune données n'ont été chargées
   else if(isactive == 1 && original_data == NULL)
   {
@@ -43,8 +46,9 @@ void pointsDisplayMiEvent (GtkWidget *widget, gpointer *data)
     gtk_widget_destroy(dialog);
   }
   //Si on désactive l'affichage des points
-  else
-    affichageDesPoints = 0;
+  else {
+    filters.displayPoints = 0;
+  }
 
 	gtk_widget_queue_draw(darea);
 }
@@ -52,10 +56,11 @@ void pointsDisplayMiEvent (GtkWidget *widget, gpointer *data)
 void routesDisplayMiEvent (GtkWidget *widget, gpointer *data)
 {
   int isactive = gtk_check_menu_item_get_active(data);
-  //Si on active l'affichage des points et que des données ont été chargées
-  if(isactive == 1 && original_data != NULL)
-    affichageDesRoutes = 1;
-  //Si on active l'affichage des loints mais que aucune données n'ont été chargées
+  //Si on active l'affichage des routes et que des données ont été chargées
+  if(isactive == 1 && original_data != NULL){
+    filters.displayRoutes = 1;
+  }
+  //Si on active l'affichage des routes mais que aucune données n'ont été chargées
   else if(isactive == 1 && original_data == NULL)
   {
     GtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT;
@@ -70,8 +75,9 @@ void routesDisplayMiEvent (GtkWidget *widget, gpointer *data)
     gtk_widget_destroy(dialog);
   }
   //Si on désactive l'affichage des routes
-  else
-    affichageDesRoutes = 0;
+  else {
+    filters.displayRoutes = 0;
+  }
 
   gtk_widget_queue_draw(darea);
 }
@@ -91,12 +97,12 @@ void on_data_loaded()
   gtk_widget_destroy(dialog);
   if(result == GTK_RESPONSE_YES)
   {
-    affichageDesPoints = 1;
+    filters.displayPoints = 1;
     gtk_check_menu_item_set_active(pointsDisplayMi, 1);
   }
   else if(result == GTK_RESPONSE_NO)
   {
-   	affichageDesPoints = 0;
+    filters.displayPoints = 0;
   }
 }
 

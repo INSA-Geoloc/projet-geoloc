@@ -9,6 +9,11 @@ struct {
     double coordy[100];
 } glob;
 
+typedef struct {
+	int displayPoints;
+	int displayRoutes;
+}menuFilters;
+
 //#define M_PI 3.14
 
 void do_drawing(cairo_t *);

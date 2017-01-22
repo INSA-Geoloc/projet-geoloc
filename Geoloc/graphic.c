@@ -11,8 +11,7 @@
 
 extern parcours * original_data;
 extern GtkWidget *darea;
-extern int affichageDesPoints;
-extern int affichageDesRoutes;
+extern menuFilters filters;
 
 gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 {
@@ -51,12 +50,12 @@ void do_drawing(cairo_t *cr)
     }
 
     glob.count = 0;
-    if(original_data != NULL && affichageDesPoints == 1)
+    if(original_data != NULL && filters.displayPoints == 1)
     {
-        if(affichageDesRoutes == 1){
+        if(filters.displayRoutes == 1){
             printf("Je veux des routes affichés\n");
         }
-    	setPath(darea, original_data, affichageDesRoutes);
+    	setPath(darea, original_data, filters.displayRoutes);
     }
     cairo_stroke(cr);
 }
