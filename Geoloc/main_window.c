@@ -14,6 +14,7 @@
 parcours * original_data = NULL;
 GtkWidget *darea;
 GtkWidget *window;
+parcours * animated_data = NULL;
 /*
 * Structure pour les filtres tous les filters sont implémentés dans graphic.h
 * Toutes les valeurs sont initialisés à 0 par défaut
@@ -82,6 +83,18 @@ void routesDisplayMiEvent (GtkWidget *widget, gpointer *data)
   gtk_widget_queue_draw(darea);
 }
 
+void playMiEvent (GtkWidget *widget, gpointer *data)
+{
+  if (!filters.displayPoints){
+    g_timeout_add(1000, G_CALLBACK(animatePath), NULL);
+  }
+  else{
+    printf("Points mais clicked\n");
+  }
+
+  gtk_widget_queue_draw(darea);
+}
+
 void on_data_loaded()
 {
   GtkResponseType result;
@@ -117,6 +130,7 @@ void load_Data(char * filename)
      exit(EXIT_FAILURE);
   }
   original_data = readData(file);
+  animated_data = original_data;
   fclose(file);
 }
 
@@ -162,6 +176,9 @@ int main(int argc, char *argv[]) {
   GtkWidget *vbox;
   GtkWidget *grid;
 
+  GtkWidget *swindow;
+  GtkWidget *viewport;
+
   GtkWidget *menubar1;
   GtkWidget *menubar2;
   GtkWidget *menubar3;
@@ -198,8 +215,9 @@ int main(int argc, char *argv[]) {
 
   window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
   gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
-  gtk_window_set_default_size(GTK_WINDOW(window), 1500, 1500);
+  gtk_window_set_default_size(GTK_WINDOW(window), 500, 500);
   gtk_window_set_title(GTK_WINDOW(window), "Geoloc");
+    
 
   vbox = gtk_box_new(FALSE, 0);
   //gtk_container_add(GTK_CONTAINER(window), vbox);
@@ -264,7 +282,16 @@ int main(int argc, char *argv[]) {
 
 
   grid = gtk_grid_new();
+  //Ajout
+  /*swindow = gtk_scrolled_window_new (NULL,NULL); //De bae valeur à modifier
+  viewport = gtk_viewport_new (NULL,NULL); //De base valeur par défaut ce sont les valeurs à modifier 
+
+  gtk_container_add (GTK_CONTAINER(viewport), darea);
+  gtk_container_add (GTK_CONTAINER(swindow), viewport);
+  gtk_grid_attach (GTK_GRID(grid), swindow, 0, 1, 1, 2);*/
+  //Fin ajout
   gtk_container_add(GTK_CONTAINER(window), grid);
+
 
   gtk_grid_attach (GTK_GRID (grid), vbox, 0, 0, 1, 1);
   gtk_grid_attach (GTK_GRID (grid), darea, 0, 1, 1, 1);
@@ -295,6 +322,9 @@ int main(int argc, char *argv[]) {
   g_signal_connect (G_OBJECT (routesDisplayMi), "toggled",
         G_CALLBACK (routesDisplayMiEvent), routesDisplayMi);
 
+  g_signal_connect (G_OBJECT (playMi), "activate",
+        G_CALLBACK (playMiEvent), playMi);
+
 
 
 
@@ -303,8 +333,6 @@ int main(int argc, char *argv[]) {
 //gtk_window_maximize (GTK_WINDOW (p_window));
 
   gtk_widget_show_all(window);
-
-  //gtk_timeout_add(1000, G_CALLBACK(testTimeout), "Test");
 
   gtk_main();
 

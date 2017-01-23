@@ -12,6 +12,7 @@
 extern parcours * original_data;
 extern GtkWidget *darea;
 extern menuFilters filters;
+extern parcours * animated_data;
 
 gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 {
@@ -19,8 +20,30 @@ gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 
     return FALSE;
 }
-gboolean testTimeout(gpointer user_data){
+gboolean animatePath(){
     printf("Je suis appele\n");
+    if(!animated_data){
+        printf("test : erreur animated_data\n");
+    }else{
+        if(animated_data->pt){
+            printf("Sans user_data pt\n");
+            printf("test : %lf\n", animated_data->pt->longitude);
+            setPoint(darea, animated_data->pt->longitude, animated_data->pt->latitude, 1);
+        }else {
+            printf("Sans user_data pt next\n");
+            printf("test : %lf\n", animated_data->next->pt->longitude);
+            setPoint(darea, animated_data->next->pt->longitude, animated_data->next->pt->latitude, 1);
+        }
+    }
+
+    if(animated_data->next){
+        printf("next ok \n");
+        printf("test : %lf\n", animated_data->next->pt->longitude);
+        animated_data = animated_data->next;
+    }else{
+        printf("Fin animation\n");
+        return FALSE;
+    }
 }
 
 void do_drawing(cairo_t *cr)
