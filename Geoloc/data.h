@@ -20,6 +20,8 @@ extern void displayData(dataPoint * d);
 
 extern double distanceBtwnPoints(dataPoint * d1, dataPoint * d2);
 
+extern void pointToPoint(dataPoint *point);
+
 extern void timeTxt(time_t timestamp);
 
 extern void setPosition(dataPoint * dp, dataPoint * dref);

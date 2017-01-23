@@ -28,11 +28,11 @@ gboolean animatePath(){
         if(animated_data->pt){
             printf("Sans user_data pt\n");
             printf("test : %lf\n", animated_data->pt->longitude);
-            setPoint(darea, animated_data->pt->longitude, animated_data->pt->latitude, 1);
+            setPoint(darea, animated_data->pt->longitude, animated_data->pt->latitude, 0);
         }else {
             printf("Sans user_data pt next\n");
             printf("test : %lf\n", animated_data->next->pt->longitude);
-            setPoint(darea, animated_data->next->pt->longitude, animated_data->next->pt->latitude, 1);
+            setPoint(darea, animated_data->next->pt->longitude, animated_data->next->pt->latitude, 0);
         }
     }
 
@@ -162,14 +162,15 @@ gboolean setPath(GtkWidget *widget, parcours* lp, int showRoutes){
 
   		while(tmp->pt != NULL){
 
-
+            //pointToPoint(tmp->pt);
+            //printf("pt lambert%lf %lf\n", tmp->pt->longitude, tmp->pt->latitude);
             setPoint(widget, tmp->pt->longitude, tmp->pt->latitude, 0);
             if(showRoutes){
                 cairo_move_to(cr, tmp->pt->longitude, tmp->pt->latitude);
                 if(tmp->next) cairo_line_to(cr, tmp->next->pt->longitude, tmp->next->pt->latitude); else break;
                 cairo_stroke(cr);
 
-                setPoint(widget, tmp->pt->longitude, tmp->pt->latitude, 1); //Hack point au dessus des lignes
+                setPoint(widget, tmp->pt->longitude, tmp->pt->latitude, 0); //Hack point au dessus des lignes
 
                 if(tmp->next) setPoint(widget, tmp->next->pt->longitude, tmp->next->pt->latitude, 0); else break;
             }
