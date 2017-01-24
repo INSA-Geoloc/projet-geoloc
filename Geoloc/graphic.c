@@ -9,10 +9,11 @@
 #include "traitement-donnees.h"
 #include "graphic.h"
 
-extern parcours * original_data;
+extern parcours *original_data;
 extern GtkWidget *darea;
 extern menuFilters filters;
-extern parcours * animated_data;
+extern parcours *animated_data;
+dataPoint *animated_point;
 
 gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 {
@@ -21,18 +22,33 @@ gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data)
     return FALSE;
 }
 gboolean animatePath(){
+    cairo_t *cr;
+    cr = gdk_cairo_create(gtk_widget_get_window(darea));
+
     printf("Je suis appele\n");
     if(!animated_data){
         printf("test : erreur animated_data\n");
     }else{
-        if(animated_data->pt){
+        if(animated_data->pt){ //Point dans le parcours
             printf("Sans user_data pt\n");
             printf("test : %lf\n", animated_data->pt->longitude);
+
+            if(animated_point != NULL){
+                cairo_move_to(cr, animated_point->longitude, animated_point->latitude);
+                cairo_line_to(cr, animated_data->pt->longitude, animated_data->pt->latitude);
+                cairo_stroke(cr);
+
+                setPoint(darea, animated_point->longitude, animated_point->latitude, 0); //Hack point au dessus des lignes
+
+               // if(tmp->next) setPoint(widget, tmp->next->pt->longitude, tmp->next->pt->latitude, 0); else break;
+            }
             setPoint(darea, animated_data->pt->longitude, animated_data->pt->latitude, 0);
-        }else {
+            animated_point = animated_data->pt; //Sauvegarde du point pour les tracés
+        }else { //1er point du parcours
             printf("Sans user_data pt next\n");
             printf("test : %lf\n", animated_data->next->pt->longitude);
             setPoint(darea, animated_data->next->pt->longitude, animated_data->next->pt->latitude, 0);
+            animated_point = animated_data->next->pt;
         }
     }
 
