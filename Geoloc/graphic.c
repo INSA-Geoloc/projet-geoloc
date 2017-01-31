@@ -62,6 +62,11 @@ gboolean animatePath(){
     }
 }
 
+gboolean animateTest(int tps){
+    printf("J'ai ete appele avec un temps de %i\n", tps);
+    return FALSE;
+}
+
 void do_drawing(cairo_t *cr)
 {
     // HACK JFL: image draw test
@@ -91,29 +96,41 @@ void do_drawing(cairo_t *cr)
     glob.count = 0;
     if(original_data != NULL && filters.displayPoints == 1)
     {
-        if(filters.displayRoutes == 1){
-            printf("Je veux des routes affichés\n");
-        }
     	setPath(darea, original_data, filters.displayRoutes);
     }
     cairo_stroke(cr);
 }
 
-gboolean setPoint(GtkWidget *widget, double xp, double yp, int isLambert){
+gboolean setPoint(GtkWidget *widget, double xp, double yp, int pointType){
     cairo_t *cr;
 
     cr = gdk_cairo_create(gtk_widget_get_window(widget));
 
-    cairo_arc(cr, xp, yp, 10.0, 0, 2*M_PI);
+    switch (pointType){
+        case 0: //Point classique
+            cairo_arc(cr, xp, yp, 10.0, 0, 2*M_PI);
+            cairo_set_source_rgba(cr, 1, 0.2, 0.2, 1); //Fill colo
+            break;
+        case 1: //Point d'une autre couleur
+            cairo_arc(cr, xp, yp, 10.0, 0, 2*M_PI);
+            cairo_set_source_rgba(cr, 1, 0.8, 0.8, 1); //Fill colo
+            break;
 
+        case 2: //Point d'interet
+            cairo_arc(cr, xp, yp, 20.0, 0, 2*M_PI);
+            cairo_set_source_rgba(cr, 1, 0.2, 0.8, 1); //Fill colo
+            break;
+        default:
+            cairo_arc(cr, xp, yp, 10.0, 0, 2*M_PI);
+            cairo_set_source_rgba(cr, 1, 0.2, 0.2, 1); //Fill colo
+
+    }
     cairo_close_path(cr);
-
     cairo_set_line_width(cr, 2.0); //Border weight
 
-    if(isLambert){
-        printf("Cest du lambert %lf / %lf\n", xp, yp);
+    /*if(pointType){
         /*Ref sur la carte en x,y*/
-        double xRef = 20;
+        /*double xRef = 20;
         double yRef = 20;
 
         double xLRef = 340;
@@ -131,7 +148,7 @@ gboolean setPoint(GtkWidget *widget, double xp, double yp, int isLambert){
     }
     else{
         cairo_set_source_rgba(cr, 1, 0.2, 0.2, 1); //Fill colo
-    }
+    }*/
 
     cairo_fill_preserve(cr);
     cairo_set_source_rgba(cr, 0, 0, 0, 0.8); //Border color
@@ -169,6 +186,32 @@ gboolean setCircle(GtkWidget *widget, double xc, double yc, double taille){
     return TRUE;
 }
 
+gboolean setLabel(GtkWidget *widget, double xl, double yl, char* text){
+
+    cairo_t *cr;
+
+    cr = gdk_cairo_create(gtk_widget_get_window(widget));
+    
+    cairo_text_extents_t extents;
+    char* utf8;
+    if(text)
+        utf8 = text;
+    else
+        utf8 = "Rue";
+    double x,y;
+
+    cairo_select_font_face (cr, "Sans",
+        CAIRO_FONT_SLANT_NORMAL,
+        CAIRO_FONT_WEIGHT_NORMAL);
+
+    cairo_set_font_size (cr, 12.0);
+    cairo_set_source_rgba (cr, 0, 0, 0, 0.8);
+    cairo_text_extents (cr, utf8, &extents);
+
+    cairo_move_to (cr, (xl+10), (yl-10));
+    cairo_show_text (cr, utf8);
+}
+
 gboolean setPath(GtkWidget *widget, parcours* lp, int showRoutes){
 		parcours * tmp = lp->next;
 
@@ -180,15 +223,30 @@ gboolean setPath(GtkWidget *widget, parcours* lp, int showRoutes){
 
             //pointToPoint(tmp->pt);
             //printf("pt lambert%lf %lf\n", tmp->pt->longitude, tmp->pt->latitude);
-            setPoint(widget, tmp->pt->longitude, tmp->pt->latitude, 0);
+            //tmp->pt->adresse = "INTERET";
             if(showRoutes){
+                setPoint(widget, tmp->pt->longitude, tmp->pt->latitude, 0);
                 cairo_move_to(cr, tmp->pt->longitude, tmp->pt->latitude);
                 if(tmp->next) cairo_line_to(cr, tmp->next->pt->longitude, tmp->next->pt->latitude); else break;
                 cairo_stroke(cr);
 
-                setPoint(widget, tmp->pt->longitude, tmp->pt->latitude, 0); //Hack point au dessus des lignes
+                if(tmp->pt->adresse == "INTERET"){
+                    setPoint(widget, tmp->pt->longitude, tmp->pt->latitude, 2); //Hack point au dessus des lignes
+                    setLabel(widget, (tmp->pt->longitude+10), (tmp->pt->latitude-10), "Point d'interet");
+                }
+                else{
+                    setPoint(widget, tmp->pt->longitude, tmp->pt->latitude, 0);
+                }
 
                 if(tmp->next) setPoint(widget, tmp->next->pt->longitude, tmp->next->pt->latitude, 0); else break;
+            }else{
+                if(tmp->pt->adresse == "INTERET"){
+                    setPoint(widget, tmp->pt->longitude, tmp->pt->latitude, 2);
+                    setLabel(widget, (tmp->pt->longitude+10), (tmp->pt->latitude-10), "Point d'interet");
+                }
+                else{
+                    setPoint(widget, tmp->pt->longitude, tmp->pt->latitude, 0);
+                }
             }
 
             if(tmp->next) tmp = tmp->next; else break;
@@ -203,23 +261,22 @@ gboolean clicked(GtkWidget *widget, GdkEventButton *event, gpointer user_data)
     cr = gdk_cairo_create (gtk_widget_get_window (widget));
 
     if (event->button == 1) {
-        //glob.coordx[glob.count] = event->x;
-        //glob.coordy[glob.count++] = event->y;
-        printf("zoom IN\n");
+        glob.coordx[glob.count] = event->x;
+        glob.coordy[glob.count++] = event->y;
+        printf("Left Click : %i\n", glob.count);
+        printf("%i / %i\n", glob.coordx[glob.count-1], glob.coordy[glob.count-1]);
+        printf("%i / %i\n", event->x, event->y);
     }
 
     if (event->button == 3) {
-        printf("Zoom Out\n");
-        //gtk_widget_queue_draw(widget);
+        printf("Right Click\n");
+        gtk_widget_queue_draw(widget);
         //return TRUE;
     }
 
     //setTest(widget);
 
     //do_drawing(cr);
-
-    cairo_scale(cr, 4.55, 4.55); //Trouver le bon calcul à chaque fois -1.55, 1.55-
-    printf("test scale\n");
 
     (parcours*) user_data;
     user_data = original_data;
@@ -341,10 +398,6 @@ void adaptLocation(double xL, double latitude){
     double r  = 6371000;
     double cx = 0;
     double cy = 0;
-
-
-
-
 
     x = r*sin(latitude)*cos(xL);
     y = r*sin(latitude)*sin(latitude);
