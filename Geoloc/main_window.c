@@ -15,6 +15,7 @@ parcours * original_data = NULL;
 GtkWidget *darea;
 GtkWidget *window;
 parcours * animated_data = NULL;
+
 /*
 * Structure pour les filtres tous les filters sont implémentés dans graphic.h
 * Toutes les valeurs sont initialisés à 0 par défaut
@@ -284,7 +285,7 @@ int main(int argc, char *argv[]) {
 
   //GtkWidget *darea;
   darea = gtk_drawing_area_new();
-  gtk_widget_set_size_request (darea, 512, 512);
+  gtk_widget_set_size_request (darea, 1200, 743);
 
 
   grid = gtk_grid_new();

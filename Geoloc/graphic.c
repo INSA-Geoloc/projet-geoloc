@@ -15,6 +15,8 @@ extern menuFilters filters;
 extern parcours *animated_data;
 dataPoint *animated_point;
 
+cairo_surface_t *image = NULL;
+
 gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 {
     do_drawing(cr);
@@ -66,15 +68,20 @@ void do_drawing(cairo_t *cr)
 {
     // HACK JFL: image draw test
     int w, h;
-    cairo_surface_t *image;
+    //cairo_surface_t *image = NULL;
 
     cairo_set_source_rgb(cr, 0, 0, 0);
     //cairo_set_line_width(cr, 0.5);
 
-    image = cairo_image_surface_create_from_png ("france_wikipedia.png");
+    //image = cairo_image_surface_create_from_png ("france_wikipedia.png");
+    if(image == NULL)
+    {
+      image = cairo_image_surface_create_from_png ("map_17.png");
+    }
+    //image = cairo_image_surface_create_from_png ("map_17.png");
     w = cairo_image_surface_get_width (image);
     h = cairo_image_surface_get_height (image);
-    cairo_scale(cr, 512.0/w, 512.0/h);
+    cairo_scale(cr, 1200.0/w, 743.0/h);
 
 
     cairo_set_source_surface (cr, image, 0, 0);
@@ -112,12 +119,18 @@ gboolean setPoint(GtkWidget *widget, double xp, double yp, int isLambert){
 
     if(isLambert){
         printf("Cest du lambert %lf / %lf\n", xp, yp);
-        /*Ref sur la carte en x,y*/
-        double xRef = 20;
-        double yRef = 20;
 
-        double xLRef = 340;
-        double yLRef = 450;
+        printf("---------------Base-------------\n");
+        printf("XP --- : %lf\n", xp);
+        printf("YP --- : %lf\n", yp);
+        printf("----------------------------\n");
+        /*Ref sur la carte en x,y*/
+        /*
+        double xRef = 5.0;
+        double yRef = 5.0;
+
+        double xLRef = 653046.81;
+        double yLRef = 6665889.14;
 
         double tmpX = (xRef * xp)/xLRef;
         double tmpY = (yRef * yp)/yLRef;
@@ -126,8 +139,30 @@ gboolean setPoint(GtkWidget *widget, double xp, double yp, int isLambert){
         yp = tmpY;
 
         cairo_set_source_rgba(cr, 1, 0.8, 0.8, 1); //Fill colo
+        */
 
+        //coordonnées lambert en 0,0
+        double one_x = 653046.81;
+        double one_y = 6665889.14;
 
+        //Coordonnées lambert en bas à droite de la carte
+        double two_x = 656282.29;
+        double two_y = 6663864.18;
+
+        //Valeur indetermine..
+        unsigned long int x = 1200;
+        unsigned long int y = 743;
+        //unsigned long int x = 3982;
+        //unsigned long int y = 2467;
+
+        xp = x * (xp - one_x) / (two_x - one_x);
+        yp = -y * (yp - one_y) / (one_y - two_y);
+
+        printf("---------------After calcul-------------\n");
+        printf("XP --- : %lf\n", xp);
+        printf("YP --- : %lf\n", yp);
+        printf("----------------------------\n");
+        cairo_set_source_rgba(cr, 1, 0.8, 0.8, 1); //Fill colo
     }
     else{
         cairo_set_source_rgba(cr, 1, 0.2, 0.2, 1); //Fill colo
@@ -178,17 +213,17 @@ gboolean setPath(GtkWidget *widget, parcours* lp, int showRoutes){
 
   		while(tmp->pt != NULL){
 
-            //pointToPoint(tmp->pt);
-            //printf("pt lambert%lf %lf\n", tmp->pt->longitude, tmp->pt->latitude);
-            setPoint(widget, tmp->pt->longitude, tmp->pt->latitude, 0);
+            pointToPoint(tmp->pt);
+            printf("pt lambert ---%lf %lf---\n", tmp->pt->longitude, tmp->pt->latitude);
+            setPoint(widget, tmp->pt->longitude, tmp->pt->latitude, 1);
             if(showRoutes){
                 cairo_move_to(cr, tmp->pt->longitude, tmp->pt->latitude);
                 if(tmp->next) cairo_line_to(cr, tmp->next->pt->longitude, tmp->next->pt->latitude); else break;
                 cairo_stroke(cr);
 
-                setPoint(widget, tmp->pt->longitude, tmp->pt->latitude, 0); //Hack point au dessus des lignes
+                setPoint(widget, tmp->pt->longitude, tmp->pt->latitude, 1); //Hack point au dessus des lignes
 
-                if(tmp->next) setPoint(widget, tmp->next->pt->longitude, tmp->next->pt->latitude, 0); else break;
+                if(tmp->next) setPoint(widget, tmp->next->pt->longitude, tmp->next->pt->latitude, 1); else break;
             }
 
             if(tmp->next) tmp = tmp->next; else break;
