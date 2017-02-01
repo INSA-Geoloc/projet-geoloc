@@ -65,6 +65,11 @@ gboolean animatePath(){
     }
 }
 
+gboolean animateTest(int tps){
+    printf("J'ai ete appele avec un temps de %i\n", tps);
+    return FALSE;
+}
+
 void do_drawing(cairo_t *cr)
 {
     // HACK JFL: image draw test
@@ -99,86 +104,72 @@ void do_drawing(cairo_t *cr)
     glob.count = 0;
     if(original_data != NULL && filters.displayPoints == 1)
     {
-        if(filters.displayRoutes == 1){
-            printf("Je veux des routes affichés\n");
-        }
-    	   setPath(darea, original_data, filters.displayRoutes);
+    	setPath(darea, original_data, filters.displayRoutes);
     }
     cairo_stroke(cr);
 }
 
-gboolean setPoint(GtkWidget *widget, double xp, double yp, int isLambert){
+gboolean setPoint(GtkWidget *widget, double xp, double yp, int pointType){
     cairo_t *cr;
 
     cr = gdk_cairo_create(gtk_widget_get_window(widget));
-
-
-
-    cairo_close_path(cr);
-
-    cairo_set_line_width(cr, 2.0); //Border weight
     double img_x;
     double img_y;
-    if(isLambert){
-        printf("Cest du lambert %lf / %lf\n", xp, yp);
 
-        printf("---------------Base-------------\n");
-        printf("XP --- : %lf\n", xp);
-        printf("YP --- : %lf\n", yp);
-        printf("----------------------------\n");
-        /*Ref sur la carte en x,y*/
-        /*
-        double xRef = 5.0;
-        double yRef = 5.0;
 
-        double xLRef = 653046.81;
-        double yLRef = 6665889.14;
+    //coordonnées lambert en 0,0
+    double one_x = 653046.81;
+    double one_y = 6665889.14;
 
-        double tmpX = (xRef * xp)/xLRef;
-        double tmpY = (yRef * yp)/yLRef;
+    //Coordonnées lambert en bas à droite de la carte
+    double two_x = 656282.29;
+    double two_y = 6663864.18;
 
-        xp = tmpX;
-        yp = tmpY;
+    //Valeur indetermine..
+    //unsigned long int x = two_x - one_x;
+    //unsigned long int y = two_y - one_y;
 
-        cairo_set_source_rgba(cr, 1, 0.8, 0.8, 1); //Fill colo
-        */
+    double x = two_x - one_x;
+    double y = two_y - one_y;
 
-        //coordonnées lambert en 0,0
-        double one_x = 653046.81;
-        double one_y = 6665889.14;
+    double coefX = 1200 / x ;
+    double coefY = 743 / y ;
 
-        //Coordonnées lambert en bas à droite de la carte
-        double two_x = 656282.29;
-        double two_y = 6663864.18;
+    img_x = xp - one_x;
+    img_y = yp - one_y;
 
-        //Valeur indetermine..
-        //unsigned long int x = two_x - one_x;
-        //unsigned long int y = two_y - one_y;
-
-        double x = two_x - one_x;
-        double y = two_y - one_y;
-
-        double coefX = 1200 / x ;
-        double coefY = 743 / y ;
-
-        img_x = xp - one_x;
-        img_y = yp - one_y;
-
-        img_x = img_x * coefX;
-        img_y = img_y * coefY;
-
-        cairo_set_source_rgba(cr, 1, 0.8, 0.8, 1); //Fill colo
-    }
-    else{
-        cairo_set_source_rgba(cr, 1, 0.2, 0.2, 1); //Fill colo
-    }
+    img_x = img_x * coefX;
+    img_y = img_y * coefY;
 
     printf("---------------After calcul-------------\n");
     printf("XP --- : %lf\n", img_x);
     printf("YP --- : %lf\n", img_y);
     printf("----------------------------\n");
-    cairo_arc(cr, img_x, img_y, 10.0, 0, 2*M_PI);
 
+    switch (pointType){
+        case 0: //Point classique
+            cairo_arc(cr, img_x, img_y, 5.0, 0, 2*M_PI);
+            cairo_set_source_rgba(cr, 0, 0.5, 1, 0.8); //Fill color blue
+            break;
+        case 1: //Point d'une autre couleur
+            cairo_arc(cr, img_x, img_y, 5.0, 0, 2*M_PI);
+            cairo_set_source_rgba(cr, 1, 0.8, 0.8, 0.8); //Fill colo
+            break;
+
+        case 2: //Point d'interet
+            cairo_arc(cr, img_x, img_y, 10.0, 0, 2*M_PI);
+            cairo_set_source_rgba(cr, 0, 0.5, 0.5, 0.8); //Fill colo
+            break;
+        case 3: //Point supprime
+            cairo_arc(cr, img_x, img_y, 10.0, 0, 2*M_PI);
+            cairo_set_source_rgba(cr, 1, 0.2, 0, 0.8); //Fill colo
+            break;
+        default:
+            cairo_arc(cr, img_x, img_y, 5.0, 0, 2*M_PI);
+            cairo_set_source_rgba(cr, 0, 0.5, 1, 0.8); //Fill colo
+    }
+    cairo_close_path(cr);
+    cairo_set_line_width(cr, 1.0); //Border weight
 
     cairo_fill_preserve(cr);
     cairo_set_source_rgba(cr, 0, 0, 0, 0.8); //Border color
@@ -199,13 +190,41 @@ gboolean setCircle(GtkWidget *widget, double xc, double yc, double taille){
     double angle1 = 0  * (M_PI/180.0);  // angles are specified
     double angle2 = 360.0 * (M_PI/180.0);  // in radians
 
+    double img_x;
+    double img_y;
+
+
+    //coordonnées lambert en 0,0
+    double one_x = 653046.81;
+    double one_y = 6665889.14;
+
+    //Coordonnées lambert en bas à droite de la carte
+    double two_x = 656282.29;
+    double two_y = 6663864.18;
+
+    //Valeur indetermine..
+    //unsigned long int x = two_x - one_x;
+    //unsigned long int y = two_y - one_y;
+
+    double x = two_x - one_x;
+    double y = two_y - one_y;
+
+    double coefX = 1200 / x ;
+    double coefY = 743 / y ;
+
+    img_x = xc - one_x;
+    img_y = yc - one_y;
+
+    img_x = img_x * coefX;
+    img_y = img_y * coefY;
+
     cairo_set_line_width(cr, 10.0);
-    cairo_arc(cr, xc, yc, radius, angle1, angle2);
+    cairo_arc(cr, img_x, img_y, radius, angle1, angle2);
 
     cairo_close_path(cr);
 
-    cairo_set_line_width(cr, 5.0); //Border wight
-    cairo_set_source_rgba(cr, 1, 0.2, 0.2, 0.2); //Fill colo
+    cairo_set_line_width(cr, 2.0); //Border wight
+    cairo_set_source_rgba(cr, 1, 0.2, 0.2, 0.1); //Fill colo
     cairo_fill_preserve(cr);
     cairo_set_source_rgba(cr, 1, 0.2, 0.2, 1); //Border color
 
@@ -214,6 +233,59 @@ gboolean setCircle(GtkWidget *widget, double xc, double yc, double taille){
     cairo_destroy(cr);
 
     return TRUE;
+}
+
+gboolean setLabel(GtkWidget *widget, double xl, double yl, char* text){
+
+    cairo_t *cr;
+
+    cr = gdk_cairo_create(gtk_widget_get_window(widget));
+
+    cairo_text_extents_t extents;
+    char* utf8;
+    if(text)
+        utf8 = text;
+    else
+        utf8 = "Rue";
+
+    double img_x;
+    double img_y;
+
+
+    //coordonnées lambert en 0,0
+    double one_x = 653046.81;
+    double one_y = 6665889.14;
+
+    //Coordonnées lambert en bas à droite de la carte
+    double two_x = 656282.29;
+    double two_y = 6663864.18;
+
+    //Valeur indetermine..
+    //unsigned long int x = two_x - one_x;
+    //unsigned long int y = two_y - one_y;
+
+    double x = two_x - one_x;
+    double y = two_y - one_y;
+
+    double coefX = 1200 / x ;
+    double coefY = 743 / y ;
+
+    img_x = xl - one_x;
+    img_y = yl - one_y;
+
+    img_x = img_x * coefX;
+    img_y = img_y * coefY;
+
+    cairo_select_font_face (cr, "Sans",
+        CAIRO_FONT_SLANT_NORMAL,
+        CAIRO_FONT_WEIGHT_NORMAL);
+
+    cairo_set_font_size (cr, 12.0);
+    cairo_set_source_rgba (cr, 0, 0, 0, 0.8);
+    cairo_text_extents (cr, utf8, &extents);
+
+    cairo_move_to (cr, (img_x+10), (img_y-10));
+    cairo_show_text (cr, utf8);
 }
 
 gboolean setPath(GtkWidget *widget, parcours* lp, int showRoutes){
@@ -226,15 +298,37 @@ gboolean setPath(GtkWidget *widget, parcours* lp, int showRoutes){
   		while(tmp->pt != NULL){
 
             printf("pt lambert ---%lf %lf---\n", tmp->pt->longitude, tmp->pt->latitude);
-            setPoint(widget, tmp->pt->longitude, tmp->pt->latitude, 1);
+
+            setCircle(widget, 40, 40, 40);
+
             if(showRoutes){
+                setPoint(widget, tmp->pt->longitude, tmp->pt->latitude, 0);
                 cairo_move_to(cr, tmp->pt->longitude, tmp->pt->latitude);
                 if(tmp->next) cairo_line_to(cr, tmp->next->pt->longitude, tmp->next->pt->latitude); else break;
                 cairo_stroke(cr);
 
-                setPoint(widget, tmp->pt->longitude, tmp->pt->latitude, 1); //Hack point au dessus des lignes
 
-                if(tmp->next) setPoint(widget, tmp->next->pt->longitude, tmp->next->pt->latitude, 1); else break;
+                if(tmp->pt->adresse == "INTERET"){
+                    setPoint(widget, tmp->pt->longitude, tmp->pt->latitude, 2); //Hack point au dessus des lignes
+                    setLabel(widget, (tmp->pt->longitude+10), (tmp->pt->latitude-10), "Point d'interet");
+                }
+                else{
+                    setPoint(widget, tmp->pt->longitude, tmp->pt->latitude, 0);
+                }
+
+                if(tmp->next) setPoint(widget, tmp->next->pt->longitude, tmp->next->pt->latitude, 0); else break;
+            }else{
+                if(tmp->pt->adresse == "INTERET"){
+                    setPoint(widget, tmp->pt->longitude, tmp->pt->latitude, 2);
+                    setLabel(widget, (tmp->pt->longitude+10), (tmp->pt->latitude-10), "Point d'interet");
+                }
+                else{
+                    setPoint(widget, tmp->pt->longitude, tmp->pt->latitude, 2);
+                    setCircle(widget, tmp->pt->longitude, tmp->pt->latitude, 20);
+                    setLabel(widget, (tmp->pt->longitude+10), (tmp->pt->latitude-10), "Point d'interet");
+                    printf("tests\n");
+                }
+
             }
             if(tmp->next) tmp = tmp->next; else break;
         }
@@ -248,23 +342,20 @@ gboolean clicked(GtkWidget *widget, GdkEventButton *event, gpointer user_data)
     cr = gdk_cairo_create (gtk_widget_get_window (widget));
 
     if (event->button == 1) {
-        //glob.coordx[glob.count] = event->x;
-        //glob.coordy[glob.count++] = event->y;
-        printf("zoom IN\n");
+        glob.coordx[glob.count] = event->x;
+        glob.coordy[glob.count++] = event->y;
+        printf("Left Click : %i\n", glob.count);
     }
 
     if (event->button == 3) {
-        printf("Zoom Out\n");
-        //gtk_widget_queue_draw(widget);
+        printf("Right Click\n");
+        gtk_widget_queue_draw(widget);
         //return TRUE;
     }
 
     //setTest(widget);
 
     //do_drawing(cr);
-
-    cairo_scale(cr, 4.55, 4.55); //Trouver le bon calcul à chaque fois -1.55, 1.55-
-    printf("test scale\n");
 
     (parcours*) user_data;
     user_data = original_data;
@@ -386,10 +477,6 @@ void adaptLocation(double xL, double latitude){
     double r  = 6371000;
     double cx = 0;
     double cy = 0;
-
-
-
-
 
     x = r*sin(latitude)*cos(xL);
     y = r*sin(latitude)*sin(latitude);

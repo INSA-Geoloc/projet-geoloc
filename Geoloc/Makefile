@@ -36,4 +36,4 @@ main.o: main.c
 	$(CC) $(DATAFLAGS) main.c $(GTKFLAGS) -lm
 
 clean:
-	rm -rf main *.o
+	rm -rf main mainwindow *.o
