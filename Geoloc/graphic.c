@@ -111,12 +111,13 @@ gboolean setPoint(GtkWidget *widget, double xp, double yp, int isLambert){
 
     cr = gdk_cairo_create(gtk_widget_get_window(widget));
 
-    cairo_arc(cr, xp, yp, 10.0, 0, 2*M_PI);
+
 
     cairo_close_path(cr);
 
     cairo_set_line_width(cr, 2.0); //Border weight
-
+    double img_x;
+    double img_y;
     if(isLambert){
         printf("Cest du lambert %lf / %lf\n", xp, yp);
 
@@ -150,23 +151,33 @@ gboolean setPoint(GtkWidget *widget, double xp, double yp, int isLambert){
         double two_y = 6663864.18;
 
         //Valeur indetermine..
-        unsigned long int x = 1200;
-        unsigned long int y = 743;
-        //unsigned long int x = 3982;
-        //unsigned long int y = 2467;
+        //unsigned long int x = two_x - one_x;
+        //unsigned long int y = two_y - one_y;
 
-        xp = x * (xp - one_x) / (two_x - one_x);
-        yp = -y * (yp - one_y) / (one_y - two_y);
+        double x = two_x - one_x;
+        double y = two_y - one_y;
 
-        printf("---------------After calcul-------------\n");
-        printf("XP --- : %lf\n", xp);
-        printf("YP --- : %lf\n", yp);
-        printf("----------------------------\n");
+        double coefX = 1200 / x ;
+        double coefY = 743 / y ;
+
+        img_x = xp - one_x;
+        img_y = yp - one_y;
+
+        img_x = img_x * coefX;
+        img_y = img_y * coefY;
+
         cairo_set_source_rgba(cr, 1, 0.8, 0.8, 1); //Fill colo
     }
     else{
         cairo_set_source_rgba(cr, 1, 0.2, 0.2, 1); //Fill colo
     }
+
+    printf("---------------After calcul-------------\n");
+    printf("XP --- : %lf\n", img_x);
+    printf("YP --- : %lf\n", img_y);
+    printf("----------------------------\n");
+    cairo_arc(cr, img_x, img_y, 10.0, 0, 2*M_PI);
+
 
     cairo_fill_preserve(cr);
     cairo_set_source_rgba(cr, 0, 0, 0, 0.8); //Border color
@@ -212,7 +223,7 @@ gboolean setPath(GtkWidget *widget, parcours* lp, int showRoutes){
     	cr = gdk_cairo_create(gtk_widget_get_window(widget));
 
   		while(tmp->pt != NULL){
-
+            dataPoint *save = tmp->pt;
             pointToPoint(tmp->pt);
             printf("pt lambert ---%lf %lf---\n", tmp->pt->longitude, tmp->pt->latitude);
             setPoint(widget, tmp->pt->longitude, tmp->pt->latitude, 1);
@@ -225,7 +236,7 @@ gboolean setPath(GtkWidget *widget, parcours* lp, int showRoutes){
 
                 if(tmp->next) setPoint(widget, tmp->next->pt->longitude, tmp->next->pt->latitude, 1); else break;
             }
-
+            tmp->pt = save;
             if(tmp->next) tmp = tmp->next; else break;
         }
 

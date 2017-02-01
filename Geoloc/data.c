@@ -65,8 +65,8 @@ void pointToPoint(dataPoint *point) {
   x += 3;
   y += 349;
 
-  point->latitude = x;
-  point->longitude = y;
+  point->latitude = y;
+  point->longitude = x;
 }
 
 void timeTxt(time_t timestamp){
@@ -131,7 +131,7 @@ void setPosition(dataPoint * dp, dataPoint * dref){
     printf("Lat 13 : %lf long 13 : %lf\n", dp->latitude, dp->longitude);
     printf("Lat 2 : %lf long 2 : %lf\n", dref->latitude, dref->longitude);
 
-    
+
 }
 
 
