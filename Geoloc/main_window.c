@@ -94,13 +94,11 @@ void routesDisplayMiEvent (GtkWidget *widget, gpointer *data)
 void playMiEvent (GtkWidget *widget, gpointer *data)
 {
   if (!filters.displayPoints){
-    g_timeout_add(1000, G_CALLBACK(animatePath), NULL);
-    /*int i = 1;
-    gboolean t;
-    for (i = 1; i < 5; ++i)
-    {
-      g_timeout_add(i*1000, G_CALLBACK(animateTest), i);
-    }*/
+    if(!animated_data->next){
+      printf("Tu as deja fait une animation\n");
+      animated_data = img_point_data;
+    }
+    g_timeout_add(800, G_CALLBACK(animatePath), NULL);
   }
   else{
     printf("Points mais clicked\n");
@@ -146,7 +144,7 @@ void load_Data(char * filename)
   original_data = readData(file);
 	GPStoLambertList(); //Conversion des données GPS en Lambert 93
 	img_point_data = LambertToImg();
-  animated_data = original_data;
+  animated_data = img_point_data;
   fclose(file);
 }
 
