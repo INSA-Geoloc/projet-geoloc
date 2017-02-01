@@ -12,6 +12,7 @@
 #include <unistd.h>
 
 parcours * original_data = NULL;
+parcours * img_point_data;
 GtkWidget *darea;
 GtkWidget *window;
 parcours * animated_data = NULL;
@@ -137,6 +138,8 @@ void load_Data(char * filename)
      exit(EXIT_FAILURE);
   }
   original_data = readData(file);
+	GPStoLambertList(); //Conversion des données GPS en Lambert 93
+	img_point_data = LambertToImg();
   animated_data = original_data;
   fclose(file);
 }

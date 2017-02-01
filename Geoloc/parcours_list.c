@@ -5,6 +5,7 @@
 #include "data.h"
 #include "parcours_list.h"
 
+extern parcours * original_data;
 /**
  * @brief Lecture du fichier Geolog
  * @param p descripteur de fichier -> ouverture d'un fichier
@@ -56,7 +57,7 @@ void addPoint(dataPoint * ptd, parcours * p){
       addPoint(ptd,p->next);
    }
    else
-  {      
+  {
       p->next = (parcours *) malloc(sizeof(parcours));
       p->next->pt = ptd;
       p->next->next = NULL;
@@ -79,7 +80,7 @@ void displayList(parcours * pl){
 
 
 /**
- * @brief Destruction liste 
+ * @brief Destruction liste
  * @param l liste
  */
 void destroyList(parcours * pl){
@@ -96,4 +97,53 @@ void destroyList(parcours * pl){
    }
    free(pl);
 
+}
+
+
+void GPStoLambertList()
+{
+  parcours * tmp = original_data;
+  original_data = original_data->next;
+
+  while(original_data->pt != NULL){
+      pointToPoint(original_data->pt);
+      if(original_data->next) original_data = original_data->next; else break;
+  }
+  original_data = tmp;
+}
+
+parcours * LambertToImg()
+{
+  parcours * tmp = original_data;
+  original_data = original_data->next;
+  parcours * list_img_point;
+
+  list_img_point = initParcours();
+
+  //coordonnées lambert en 0,0
+  double one_x = 653046.81;
+  double one_y = 6665889.14;
+
+  //Coordonnées lambert en bas à droite de la carte
+  double two_x = 656282.29;
+  double two_y = 6663864.18;
+
+  double limit_x = two_x - one_x;
+  double limit_y = two_y - one_y;
+
+  dataPoint* img_point;
+
+  while(original_data->pt != NULL){
+
+    //if(original_data->pt->longitude - one_x > )
+    //longitude --> X  latitude --> Y
+    double img_x = (original_data->pt->longitude - one_x) * 1200 / limit_x;
+    double img_y = (original_data->pt->latitude - one_y) * 743 / limit_y;
+
+    img_point = newPoint(original_data->pt->time, img_y, img_x);
+    addPoint(img_point, list_img_point);
+    if(original_data->next) original_data = original_data->next; else break;
+  }
+    original_data = tmp;
+  return list_img_point;
 }

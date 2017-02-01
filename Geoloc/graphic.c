@@ -10,6 +10,7 @@
 #include "graphic.h"
 
 extern parcours *original_data;
+extern parcours * img_point_data;
 extern GtkWidget *darea;
 extern menuFilters filters;
 extern parcours *animated_data;
@@ -101,7 +102,7 @@ void do_drawing(cairo_t *cr)
         if(filters.displayRoutes == 1){
             printf("Je veux des routes affichés\n");
         }
-    	setPath(darea, original_data, filters.displayRoutes);
+    	   setPath(darea, original_data, filters.displayRoutes);
     }
     cairo_stroke(cr);
 }
@@ -223,8 +224,7 @@ gboolean setPath(GtkWidget *widget, parcours* lp, int showRoutes){
     	cr = gdk_cairo_create(gtk_widget_get_window(widget));
 
   		while(tmp->pt != NULL){
-            dataPoint *save = tmp->pt;
-            pointToPoint(tmp->pt);
+
             printf("pt lambert ---%lf %lf---\n", tmp->pt->longitude, tmp->pt->latitude);
             setPoint(widget, tmp->pt->longitude, tmp->pt->latitude, 1);
             if(showRoutes){
@@ -236,7 +236,6 @@ gboolean setPath(GtkWidget *widget, parcours* lp, int showRoutes){
 
                 if(tmp->next) setPoint(widget, tmp->next->pt->longitude, tmp->next->pt->latitude, 1); else break;
             }
-            tmp->pt = save;
             if(tmp->next) tmp = tmp->next; else break;
         }
 

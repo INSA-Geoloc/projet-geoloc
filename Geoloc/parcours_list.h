@@ -24,4 +24,8 @@ extern void displayList(parcours * p);
 
 extern void destroyList(parcours * l);
 
+extern void GPStoLambertList();
+
+extern parcours * LambertToImg();
+
 #endif
