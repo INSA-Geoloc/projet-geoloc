@@ -94,6 +94,12 @@ void playMiEvent (GtkWidget *widget, gpointer *data)
 {
   if (!filters.displayPoints){
     g_timeout_add(1000, G_CALLBACK(animatePath), NULL);
+    /*int i = 1;
+    gboolean t;
+    for (i = 1; i < 5; ++i)
+    {
+      g_timeout_add(i*1000, G_CALLBACK(animateTest), i);
+    }*/
   }
   else{
     printf("Points mais clicked\n");
@@ -218,6 +224,8 @@ int main(int argc, char *argv[]) {
   //Annimations
   GtkWidget *playMi;
 
+  glob.count = 0;
+
   gtk_init(&argc, &argv);
 
   window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
@@ -290,12 +298,16 @@ int main(int argc, char *argv[]) {
 
   grid = gtk_grid_new();
   //Ajout
-  /*swindow = gtk_scrolled_window_new (NULL,NULL); //De bae valeur à modifier
+  /*swindow = gtk_scrolled_window_new (NULL,NULL); //De base valeur à modifier
   viewport = gtk_viewport_new (NULL,NULL); //De base valeur par défaut ce sont les valeurs à modifier
+  //GtkAdjustment *gtk_scrollable_get_hadjustment (GtkScrollable *scrollable);
+  gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swindow), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+  gtk_grid_attach(GTK_GRID(grid), swindow, 0, 1, 400, 200);
 
   gtk_container_add (GTK_CONTAINER(viewport), darea);
+  //gtk_container_add (GTK_CONTAINER(swindow), viewport);
   gtk_container_add (GTK_CONTAINER(swindow), viewport);
-  gtk_grid_attach (GTK_GRID(grid), swindow, 0, 1, 1, 2);*/
+  //gtk_grid_attach (GTK_GRID(grid), swindow, 0, 1, 1, 2);*/
   //Fin ajout
   gtk_container_add(GTK_CONTAINER(window), grid);
 
@@ -303,7 +315,6 @@ int main(int argc, char *argv[]) {
   gtk_grid_attach (GTK_GRID (grid), vbox, 0, 0, 1, 1);
   gtk_grid_attach (GTK_GRID (grid), darea, 0, 1, 1, 1);
 
-  glob.count = 0;
   gtk_widget_add_events(window, GDK_BUTTON_PRESS_MASK);
 
   g_signal_connect(G_OBJECT(darea), "draw", G_CALLBACK(on_draw_event), NULL);
