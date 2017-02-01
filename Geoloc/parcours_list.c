@@ -134,14 +134,17 @@ parcours * LambertToImg()
   dataPoint* img_point;
 
   while(original_data->pt != NULL){
+    //longitude --> X
+    //latitude --> Y
 
-    //if(original_data->pt->longitude - one_x > )
-    //longitude --> X  latitude --> Y
-    double img_x = (original_data->pt->longitude - one_x) * 1200 / limit_x;
-    double img_y = (original_data->pt->latitude - one_y) * 743 / limit_y;
+    if(original_data->pt->longitude - one_x <= limit_x  || original_data->pt->latitude <= one_y > limit_y)
+    {
+      double img_x = (original_data->pt->longitude - one_x) * 1200 / limit_x;
+      double img_y = (original_data->pt->latitude - one_y) * 743 / limit_y;
 
-    img_point = newPoint(original_data->pt->time, img_y, img_x);
-    addPoint(img_point, list_img_point);
+      img_point = newPoint(original_data->pt->time, img_y, img_x);
+      addPoint(img_point, list_img_point);
+    }    
     if(original_data->next) original_data = original_data->next; else break;
   }
     original_data = tmp;
