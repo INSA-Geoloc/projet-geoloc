@@ -218,10 +218,24 @@ gboolean setPath(GtkWidget *widget, parcours* lp, int showRoutes){
                 if(tmp->next) cairo_line_to(cr, tmp->next->pt->longitude, tmp->next->pt->latitude); else break;
                 cairo_stroke(cr);
 
+                if(filters.displayCircles){
+                    setCircle(widget, tmp->pt->longitude, tmp->pt->latitude, 20);
+                    if(tmp->next) setCircle(widget, tmp->next->pt->longitude, tmp->next->pt->latitude, 20); else break;
+                }
 
-                if(tmp->pt->adresse == "INTERET"){
+                if(filters.displayIPoints){
+                    setLabel(widget, (tmp->pt->longitude+10), (tmp->pt->latitude-10), "Point d'interet");
+                    if(tmp->next) setLabel(widget, (tmp->next->pt->longitude+10), (tmp->next->pt->latitude-10), "Point d'interet"); else break;
+                }
+
+
+                if(tmp->pt->adresse == "INTERET" && filters.displayIPoints){
                     setPoint(widget, tmp->pt->longitude, tmp->pt->latitude, 2); //Hack point au dessus des lignes
                     setLabel(widget, (tmp->pt->longitude+10), (tmp->pt->latitude-10), "Point d'interet");
+                    if(tmp->next){
+                        setPoint(widget, tmp->next->pt->longitude, tmp->next->pt->latitude, 2); //Hack point au dessus des lignes
+                        setLabel(widget, (tmp->next->pt->longitude+10), (tmp->next->pt->latitude-10), "Point d'interet");
+                    }
                 }
                 else{
                     setPoint(widget, tmp->pt->longitude, tmp->pt->latitude, 0);
@@ -229,15 +243,17 @@ gboolean setPath(GtkWidget *widget, parcours* lp, int showRoutes){
 
                 if(tmp->next) setPoint(widget, tmp->next->pt->longitude, tmp->next->pt->latitude, 0); else break;
             }else{
-                if(tmp->pt->adresse == "INTERET"){
+
+                if(filters.displayCircles){
+                    setCircle(widget, tmp->pt->longitude, tmp->pt->latitude, 20);
+                }
+
+                if(tmp->pt->adresse == "INTERET" && filters.displayIPoints){
                     setPoint(widget, tmp->pt->longitude, tmp->pt->latitude, 2);
                     setLabel(widget, (tmp->pt->longitude+10), (tmp->pt->latitude-10), "Point d'interet");
                 }
                 else{
-                    setPoint(widget, tmp->pt->longitude, tmp->pt->latitude, 2);
-                    setCircle(widget, tmp->pt->longitude, tmp->pt->latitude, 20);
-                    setLabel(widget, (tmp->pt->longitude+10), (tmp->pt->latitude-10), "Point d'interet");
-                    printf("tests\n");
+                    setPoint(widget, tmp->pt->longitude, tmp->pt->latitude, 0);
                 }
 
             }

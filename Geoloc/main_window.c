@@ -27,6 +27,8 @@ menuFilters filters;
 //Sous menu
 GtkWidget *pointsDisplayMi;
 GtkWidget *routesDisplayMi;
+GtkWidget *pointInteretDisplayMi;
+GtkWidget *cercleAnonymatDisplayMi;
 
 
 void pointsDisplayMiEvent (GtkWidget *widget, gpointer *data)
@@ -53,6 +55,8 @@ void pointsDisplayMiEvent (GtkWidget *widget, gpointer *data)
   else {
     filters.displayPoints = 0;
 		gtk_check_menu_item_set_active(routesDisplayMi, 0);
+    gtk_check_menu_item_set_active(pointInteretDisplayMi, 0);
+    gtk_check_menu_item_set_active(cercleAnonymatDisplayMi, 0);
   }
 
 	gtk_widget_queue_draw(darea);
@@ -91,18 +95,83 @@ void routesDisplayMiEvent (GtkWidget *widget, gpointer *data)
   gtk_widget_queue_draw(darea);
 }
 
+void pointInteretDisplayMiEvent (GtkWidget *widget, gpointer *data)
+{
+  int isactive = gtk_check_menu_item_get_active(data);
+  //Si on active l'affichage des routes et que des données ont été chargées
+  if(isactive == 1 && original_data != NULL){
+    //Si on affiche les routes on affiche aussi les points et donc coche la checkbox "affichage des points"
+    filters.displayIPoints = 1;
+    gtk_check_menu_item_set_active(pointInteretDisplayMi, 1);
+    filters.displayIPoints = 1;
+
+  }
+  //Si on active l'affichage des routes mais que aucune données n'ont été chargées
+  else if(isactive == 1 && original_data == NULL)
+  {
+    GtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT;
+    GtkWidget* dialog = gtk_message_dialog_new (window ,
+                                   flags,
+                                   GTK_MESSAGE_INFO,
+                                   GTK_BUTTONS_OK,
+                                   "Impossible d'afficher les points d'interet, aucune donnée n'a été chargée");
+
+    gtk_dialog_run(GTK_DIALOG (dialog));
+    gtk_check_menu_item_set_active(pointInteretDisplayMi, 0);
+    gtk_widget_destroy(dialog);
+  }
+  //Si on désactive l'affichage des routes
+  else {
+    filters.displayIPoints = 0;
+  }
+
+  gtk_widget_queue_draw(darea);
+}
+
+void cercleAnonymatDisplayMiEvent (GtkWidget *widget, gpointer *data)
+{
+  int isactive = gtk_check_menu_item_get_active(data);
+  //Si on active l'affichage des routes et que des données ont été chargées
+  if(isactive == 1 && original_data != NULL){
+    //Si on affiche les routes on affiche aussi les points et donc coche la checkbox "affichage des points"
+    filters.displayCircles = 1;
+    gtk_check_menu_item_set_active(cercleAnonymatDisplayMi, 1);
+    filters.displayCircles = 1;
+
+  }
+  //Si on active l'affichage des routes mais que aucune données n'ont été chargées
+  else if(isactive == 1 && original_data == NULL)
+  {
+    GtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT;
+    GtkWidget* dialog = gtk_message_dialog_new (window ,
+                                   flags,
+                                   GTK_MESSAGE_INFO,
+                                   GTK_BUTTONS_OK,
+                                   "Impossible d'afficher les cercles, aucune donnée n'a été chargée");
+
+    gtk_dialog_run(GTK_DIALOG (dialog));
+    gtk_check_menu_item_set_active(cercleAnonymatDisplayMi, 0);
+    gtk_widget_destroy(dialog);
+  }
+  //Si on désactive l'affichage des routes
+  else {
+    filters.displayCircles = 0;
+  }
+
+  gtk_widget_queue_draw(darea);
+}
+
 void playMiEvent (GtkWidget *widget, gpointer *data)
 {
-  if (!filters.displayPoints){
+  gtk_widget_queue_draw(widget);
+  filters.displayPoints = 0;
+  gtk_check_menu_item_set_active(pointsDisplayMi, 0);
+
     if(!animated_data->next){
       printf("Tu as deja fait une animation\n");
       animated_data = img_point_data;
     }
     g_timeout_add(800, G_CALLBACK(animatePath), NULL);
-  }
-  else{
-    printf("Points mais clicked\n");
-  }
 
   gtk_widget_queue_draw(darea);
 }
@@ -219,8 +288,8 @@ int main(int argc, char *argv[]) {
   //Affichage
   //GtkWidget *pointsDisplayMi;
   //GtkWidget *routesDisplayMi;
-  GtkWidget *pointInteretDisplayMi;
-  GtkWidget *cercleAnonymatDisplayMi;
+  //GtkWidget *pointInteretDisplayMi;
+  //GtkWidget *cercleAnonymatDisplayMi;
 
   //Annimations
   GtkWidget *playMi;
@@ -340,6 +409,12 @@ int main(int argc, char *argv[]) {
 
   g_signal_connect (G_OBJECT (routesDisplayMi), "toggled",
         G_CALLBACK (routesDisplayMiEvent), routesDisplayMi);
+
+  g_signal_connect (G_OBJECT (pointInteretDisplayMi), "toggled",
+        G_CALLBACK (pointInteretDisplayMiEvent), pointInteretDisplayMi);
+
+  g_signal_connect (G_OBJECT (cercleAnonymatDisplayMi), "toggled",
+        G_CALLBACK (cercleAnonymatDisplayMiEvent), cercleAnonymatDisplayMi);
 
   g_signal_connect (G_OBJECT (playMi), "activate",
         G_CALLBACK (playMiEvent), playMi);
