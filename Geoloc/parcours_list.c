@@ -121,12 +121,12 @@ parcours * LambertToImg()
   list_img_point = initParcours();
 
   //coordonnées lambert en 0,0
-  double one_x = 653046.81;
-  double one_y = 6665889.14;
+  double one_x = 651816.37;
+  double one_y = 6666705.91;
 
   //Coordonnées lambert en bas à droite de la carte
-  double two_x = 656282.29;
-  double two_y = 6663864.18;
+  double two_x = 657157.92;
+  double two_y = 6663353.00;
 
   double limit_x = two_x - one_x;
   double limit_y = two_y - one_y;
@@ -144,7 +144,7 @@ parcours * LambertToImg()
 
       img_point = newPoint(original_data->pt->time, img_y, img_x);
       addPoint(img_point, list_img_point);
-    }    
+    }
     if(original_data->next) original_data = original_data->next; else break;
   }
     original_data = tmp;
