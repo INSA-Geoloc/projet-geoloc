@@ -15,6 +15,7 @@ extern GtkWidget *darea;
 extern menuFilters filters;
 extern parcours *animated_data;
 dataPoint *animated_point;
+extern parcours *deleted_data;
 
 cairo_surface_t *image = NULL;
 
@@ -106,6 +107,10 @@ void do_drawing(cairo_t *cr)
     {
     	setPath(darea, img_point_data, filters.displayRoutes);
     }
+    if(original_data != NULL && filters.displayPoints == 1 && filters.displayCircles)
+    {
+        setPath(darea, deleted_data, 3);
+    }
     cairo_stroke(cr);
 }
 
@@ -129,7 +134,7 @@ gboolean setPoint(GtkWidget *widget, double xp, double yp, int pointType){
             cairo_set_source_rgba(cr, 0, 0.5, 0.5, 0.8); //Fill colo
             break;
         case 3: //Point supprime
-            cairo_arc(cr, xp, yp, 10.0, 0, 2*M_PI);
+            cairo_arc(cr, xp, yp, 5.0, 0, 2*M_PI);
             cairo_set_source_rgba(cr, 1, 0.2, 0, 0.8); //Fill colo
             break;
         default:
@@ -200,7 +205,7 @@ gboolean setLabel(GtkWidget *widget, double xl, double yl, char* text){
     cairo_move_to (cr, (xl+10), (yl-10));
     cairo_show_text (cr, utf8);
 }
-
+int isDone = 0;
 gboolean setPath(GtkWidget *widget, parcours* lp, int showRoutes){
 		parcours * tmp = lp->next;
 
@@ -210,9 +215,14 @@ gboolean setPath(GtkWidget *widget, parcours* lp, int showRoutes){
 
   		while(tmp->pt != NULL){
 
-            //printf("pt lambert ---%lf %lf---\n", tmp->pt->longitude, tmp->pt->latitude);
+            if(tmp->pt->time == 1477056412 && isDone != 1 && !filters.displayCircles){
+                printf("J'en ai trouve un\n");
+                addPoint(tmp->pt, deleted_data);
+                isDone = 1;
+                removePoint(tmp->pt, img_point_data);
+            }
 
-            if(showRoutes){
+            if(showRoutes == 1){
                 setPoint(widget, tmp->pt->longitude, tmp->pt->latitude, 0);
                 cairo_move_to(cr, tmp->pt->longitude, tmp->pt->latitude);
                 if(tmp->next) cairo_line_to(cr, tmp->next->pt->longitude, tmp->next->pt->latitude); else break;
@@ -253,7 +263,11 @@ gboolean setPath(GtkWidget *widget, parcours* lp, int showRoutes){
                     setLabel(widget, (tmp->pt->longitude+10), (tmp->pt->latitude-10), "Point d'interet");
                 }
                 else{
-                    setPoint(widget, tmp->pt->longitude, tmp->pt->latitude, 0);
+                    if(showRoutes == 3){ //pt suppr
+                        setPoint(widget, tmp->pt->longitude, tmp->pt->latitude, 3);
+                    }else{
+                        setPoint(widget, tmp->pt->longitude, tmp->pt->latitude, 0);    
+                    }
                 }
 
             }

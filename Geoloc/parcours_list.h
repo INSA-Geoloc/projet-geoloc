@@ -19,6 +19,8 @@ extern parcours* initParcours();
 // Ajoute un point en queue de liste
 extern void addPoint(dataPoint * pt, parcours * p);
 
+extern int removePoint(dataPoint * ptd, parcours * p);
+
 //Affichage de la liste
 extern void displayList(parcours * p);
 

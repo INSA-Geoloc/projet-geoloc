@@ -64,6 +64,51 @@ void addPoint(dataPoint * ptd, parcours * p){
    }
 }
 
+int removePoint(dataPoint * ptd, parcours * p){
+  dataPoint *test;
+  parcours *ptr_rech = (parcours *) malloc(sizeof(parcours)); // Pointeur de recherche
+
+  parcours *ptr_trait = (parcours *) malloc(sizeof(parcours)); // Pointeur de traitement
+  
+  ptr_trait = p->next;
+
+  if (ptr_trait->pt->time == ptd->time){
+      printf("Debut trouve \n");
+      p->next = p->next->next;
+      p->size--;
+      //free(ptr_trait);
+      return 1;
+  }
+  ptr_rech = p->next->next;
+  while(ptr_rech->pt != NULL){
+      if(ptr_rech->pt->time == ptd->time){
+          printf("%i trouve (%i) \n", ptr_rech->pt->time, ptd->time);
+          ptr_trait->next = ptr_rech->next;
+          printf("testT\n");
+          p->size--;
+          printf("TestG\n");
+          printf("TestV\n");
+          //free(ptr_rech);
+          return 1;
+      }else{
+          printf("Pas trouve (%i != %i) passe au suivant\n", ptr_rech->pt->time, ptd->time);
+
+          if(ptr_rech->next == NULL){
+            printf("Non trouve \n");
+            printf("testRemove9\n");
+            return 0;
+          }
+          ptr_trait = ptr_rech;
+          ptr_rech = ptr_rech->next;
+      }
+
+  }
+  printf("testRemove77\n");
+  free(ptr_rech);
+  free(ptr_trait);
+  return 0;
+}
+
 /**
  * @brief Affichage de toute la liste
  * @param p liste
