@@ -172,7 +172,7 @@ void playMiEvent (GtkWidget *widget, gpointer *data)
       printf("Tu as deja fait une animation\n");
       animated_data = img_point_data;
     }
-    g_timeout_add(300, G_CALLBACK(animatePath), NULL);
+    g_timeout_add(100, G_CALLBACK(animatePath), NULL);
 
   gtk_widget_queue_draw(darea);
 }

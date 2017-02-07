@@ -103,11 +103,11 @@ void do_drawing(cairo_t *cr)
     }
 
     glob.count = 0;
-    if(original_data != NULL && filters.displayPoints == 1)
+    if(original_data != NULL && original_data->next != NULL && filters.displayPoints == 1)
     {
     	setPath(darea, img_point_data, filters.displayRoutes);
     }
-    if(original_data != NULL && filters.displayPoints == 1 && filters.displayCircles)
+    if(original_data != NULL && deleted_data->next != NULL && filters.displayPoints == 1 && filters.displayCircles)
     {
         setPath(darea, deleted_data, 3);
     }
@@ -209,13 +209,17 @@ int isDone = 0;
 gboolean setPath(GtkWidget *widget, parcours* lp, int showRoutes){
 		parcours * tmp = lp->next;
 
+        if(tmp == NULL){
+            printf("Erreur parcours nul\n");
+            return FALSE;
+        }
+
 		cairo_t *cr;
 
     	cr = gdk_cairo_create(gtk_widget_get_window(widget));
-
   		while(tmp->pt != NULL){
 
-            if(tmp->pt->time == 1477056412 && isDone != 1 && !filters.displayCircles){
+            if(tmp->pt->time == 1477056415 && isDone != 1 && !filters.displayCircles){
                 printf("J'en ai trouve un\n");
                 addPoint(tmp->pt, deleted_data);
                 isDone = 1;
@@ -264,6 +268,7 @@ gboolean setPath(GtkWidget *widget, parcours* lp, int showRoutes){
                 }
                 else{
                     if(showRoutes == 3){ //pt suppr
+                        printf("Test setPath3\n");
                         setPoint(widget, tmp->pt->longitude, tmp->pt->latitude, 3);
                     }else{
                         setPoint(widget, tmp->pt->longitude, tmp->pt->latitude, 0);    
