@@ -107,7 +107,7 @@ void do_drawing(cairo_t *cr)
     {
     	setPath(darea, img_point_data, filters.displayRoutes);
     }
-    if(original_data != NULL && deleted_data->next != NULL && filters.displayPoints == 1 && filters.displayCircles)
+    if(original_data != NULL && deleted_data->next != NULL && filters.displayPoints == 1 && filters.displayDeletedPoints)
     {
         setPath(darea, deleted_data, 3);
     }
@@ -219,7 +219,7 @@ gboolean setPath(GtkWidget *widget, parcours* lp, int showRoutes){
     	cr = gdk_cairo_create(gtk_widget_get_window(widget));
   		while(tmp->pt != NULL){
 
-            if(tmp->pt->time == 1477056415 && isDone != 1 && !filters.displayCircles){
+            if(tmp->pt->time == 1477056415 && isDone != 1 && !filters.displayDeletedPoints){
                 printf("J'en ai trouve un\n");
                 addPoint(tmp->pt, deleted_data);
                 isDone = 1;
@@ -232,15 +232,10 @@ gboolean setPath(GtkWidget *widget, parcours* lp, int showRoutes){
                 if(tmp->next) cairo_line_to(cr, tmp->next->pt->longitude, tmp->next->pt->latitude); else break;
                 cairo_stroke(cr);
 
-                if(filters.displayCircles){
+                /*if(filters.displayCircles){
                     setCircle(widget, tmp->pt->longitude, tmp->pt->latitude, 20);
                     if(tmp->next) setCircle(widget, tmp->next->pt->longitude, tmp->next->pt->latitude, 20); else break;
-                }
-
-                if(filters.displayIPoints){
-                    setLabel(widget, (tmp->pt->longitude+10), (tmp->pt->latitude-10), "Point d'interet");
-                    if(tmp->next) setLabel(widget, (tmp->next->pt->longitude+10), (tmp->next->pt->latitude-10), "Point d'interet"); else break;
-                }
+                }*/
 
 
                 if(tmp->pt->adresse == "INTERET" && filters.displayIPoints){
@@ -258,9 +253,9 @@ gboolean setPath(GtkWidget *widget, parcours* lp, int showRoutes){
                 if(tmp->next) setPoint(widget, tmp->next->pt->longitude, tmp->next->pt->latitude, 0); else break;
             }else{
 
-                if(filters.displayCircles){
+                /*if(filters.displayDeletedPoints){
                     setCircle(widget, tmp->pt->longitude, tmp->pt->latitude, 20);
-                }
+                }*/
 
                 if(tmp->pt->adresse == "INTERET" && filters.displayIPoints){
                     setPoint(widget, tmp->pt->longitude, tmp->pt->latitude, 2);
