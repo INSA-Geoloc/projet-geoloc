@@ -219,7 +219,8 @@ gboolean setPath(GtkWidget *widget, parcours* lp, int showRoutes){
     	cr = gdk_cairo_create(gtk_widget_get_window(widget));
   		while(tmp->pt != NULL){
 
-            if(tmp->pt->time == 1477056415 && isDone != 1 && !filters.displayCircles){
+            if(tmp->pt->time == 1481225826 && isDone != 1 && !filters.displayCircles){
+                //printf(" Desnité : %d \n", computeDensity(tmp->pt->latitude,tmp->pt->longitude));
                 printf("J'en ai trouve un\n");
                 addPoint(tmp->pt, deleted_data);
                 isDone = 1;
@@ -237,13 +238,8 @@ gboolean setPath(GtkWidget *widget, parcours* lp, int showRoutes){
                     if(tmp->next) setCircle(widget, tmp->next->pt->longitude, tmp->next->pt->latitude, 20); else break;
                 }
 
-                if(filters.displayIPoints){
-                    setLabel(widget, (tmp->pt->longitude+10), (tmp->pt->latitude-10), "Point d'interet");
-                    if(tmp->next) setLabel(widget, (tmp->next->pt->longitude+10), (tmp->next->pt->latitude-10), "Point d'interet"); else break;
-                }
 
-
-                if(tmp->pt->adresse == "INTERET" && filters.displayIPoints){
+                if( strcmp(tmp->pt->adresse,"INTERET") && filters.displayIPoints){
                     setPoint(widget, tmp->pt->longitude, tmp->pt->latitude, 2); //Hack point au dessus des lignes
                     setLabel(widget, (tmp->pt->longitude+10), (tmp->pt->latitude-10), "Point d'interet");
                     if(tmp->next){
@@ -262,7 +258,7 @@ gboolean setPath(GtkWidget *widget, parcours* lp, int showRoutes){
                     setCircle(widget, tmp->pt->longitude, tmp->pt->latitude, 20);
                 }
 
-                if(tmp->pt->adresse == "INTERET" && filters.displayIPoints){
+                if(strcmp(tmp->pt->adresse,"INTERET") && filters.displayIPoints){
                     setPoint(widget, tmp->pt->longitude, tmp->pt->latitude, 2);
                     setLabel(widget, (tmp->pt->longitude+10), (tmp->pt->latitude-10), "Point d'interet");
                 }

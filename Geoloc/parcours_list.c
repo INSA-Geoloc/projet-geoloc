@@ -6,9 +6,10 @@
 #include "data.h"
 #include "parcours_list.h"
 
-#define INTEREST_RATE 15
+#define INTEREST_RATE 100
 
 extern parcours * original_data;
+extern parcours * deleted_data;
 /**
  * @brief Lecture du fichier Geolog
  * @param p descripteur de fichier -> ouverture d'un fichier
@@ -49,10 +50,11 @@ void readDb()
   else
   {
     while( tmp->next != NULL) {
+      //strtok
       while(fscanf(f, "%s,%lf,%lf\n", adresse, &lat, &lon) == 3) {
         printf("Adresse : %s \n", adresse);
         if ( fabs(tmp->pt->latitude - lat)< 2 && fabs(tmp->pt->longitude - lon) < 2){
-          tmp->pt->adresse = (char*)malloc(strlen(adresse));
+          //tmp->pt->adresse = (char*)malloc(strlen(adresse));
           strcpy(tmp->pt->adresse,adresse); // faire malloc ? 
           break;
         }
@@ -87,32 +89,38 @@ int computeDensity(double pointLat, double pointLong) {
   return density;
 }
 
-void cleanRedundantPoints(parcours * list) {
-  dataPoint * tmp;
-  parcours * listTemp = list;
-
+/*
+* Faire en sorte que on regarde un point est tant qu'il y a des points à portées on les supprimer
+* Aprés on passe au points suivants.
+*/
+void cleanRedundantPoints() {
+  parcours * listTemp = original_data->next;
+  parcours * suiv; 
+  parcours *previous = NULL;
   while (listTemp->next != NULL) {
-    if( fabs(listTemp->pt->longitude - listTemp->next->pt->longitude)< 2 && fabs(listTemp->pt->latitude - listTemp->next->pt->latitude) < 2 ) {
-      // We clean the next point.
-      if (listTemp->next->next != NULL) { // There is a point after the one we want to delete
-        //destroyPoint(list->next->pt);
-        listTemp->next = listTemp->next->next;
-      } else {
-        // Next point is last point.
-        listTemp->next = NULL;
+    suiv = listTemp->next;
+    printf("%f \n",fabs(listTemp->pt->longitude - suiv->pt->longitude));
+    printf("%f\n",fabs(listTemp->pt->latitude - suiv->pt->latitude));
+    if( fabs(listTemp->pt->longitude - suiv->pt->longitude)< 30 && fabs(listTemp->pt->latitude - suiv->pt->latitude) < 30 ) {
+      if(previous != NULL) { // First point
+        addPoint(listTemp->pt, deleted_data);
+        previous->next = suiv;
       }
+    } else {
+      previous = listTemp;
     }
-    listTemp = listTemp->next;
+    listTemp = suiv;
   }
 }
 
-void detectInterest(parcours * list, dataPoint * point) {
-  parcours * listTemp = list;
+void detectInterest(dataPoint * point) {
+  parcours * listTemp = original_data->next;
   dataPoint* toBeDeleted[50];
   unsigned int count = 0;
 
-  do {
-    if ( fabs(listTemp->pt->latitude - point->latitude ) < 15 && fabs(listTemp->pt->longitude - point->longitude ) < 15 )
+  while (listTemp->next != NULL ) {
+      printf("Coucou \n");
+    if ( fabs(listTemp->pt->latitude - point->latitude ) < 30 && fabs(listTemp->pt->longitude - point->longitude ) < 30 )
     {
       if (count < 50){
         toBeDeleted[count] = listTemp->pt;
@@ -120,15 +128,17 @@ void detectInterest(parcours * list, dataPoint * point) {
       count++;
     }
     listTemp = listTemp->next;
-  } while (listTemp->next != NULL);
-
+  } 
+      printf("Coucou 2 \n");
   if (count >= INTEREST_RATE)
   {
     // Appelle a la fonction remove Point de jeremy. en passant chacun des points.
-    point->adresse = "INTERET"; // Besoin d'allouer ou deja fait ?
+    //point->adresse = "INTERET"; // Besoin d'allouer ou deja fait ?
+    strcpy(point->adresse, "INTERET");
+    printf("J'ai mis un point d'interet \n");
     int i;
     for (i = 0; i<50; i++) {
-      // removePoint(list, toBeDeleted[i]);
+      removePoint(toBeDeleted[i],original_data);
     }
   }
 }
