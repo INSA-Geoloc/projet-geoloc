@@ -21,7 +21,7 @@ dataPoint* newPoint(int t,double lat, double longi){
   temp->longitude = longi;
   temp->latitude = lat;
   temp->adresse = NULL;
-
+  //temp->adresse = (char*)malloc(100*sizeof(char));
   return temp;
 }
 

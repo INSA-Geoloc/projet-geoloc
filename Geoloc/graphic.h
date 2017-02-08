@@ -13,7 +13,7 @@ typedef struct {
 	int displayPoints;
 	int displayRoutes;
 	int displayIPoints;
-	int displayCircles;
+	int displayDeletedPoints;
 }menuFilters;
 
 //#define M_PI 3.14
