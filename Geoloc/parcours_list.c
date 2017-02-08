@@ -33,34 +33,35 @@ parcours* readData(FILE * p){
 
 /*
 * A appeler avant de mettre les points à l'echelle
-* @param list liste de points avec coord en Lambert 
+* @param list liste de points avec coord en Lambert
 */
-parcours* readDb( parcours * list) 
+parcours* readDb( parcours * list)
 {
+  printf("OK\n" );
   parcours * tmp = list;
   FILE * f = fopen("IGN.csv","r");
   double lat, lon;
   char * adresse = (char*) malloc(60);
 
-  if ( f == NULL) 
+  if ( f == NULL)
   {
     fprintf(stderr, "Erreur ouverture de fichier IGN \n ");
-  } 
-  else 
+  }
+  else
   {
     while( tmp->next != NULL) {
       while(fscanf(f, "%s,%lf,%lf\n", adresse, &lat, &lon) == 3) {
         printf("Adresse : %s \n", adresse);
         if ( fabs(list->pt->latitude - lat)< 2 && fabs(list->pt->longitude - lon) < 2){
           list->pt->adresse = (char*)malloc(strlen(adresse));
-          strcpy(list->pt->adresse,adresse); // faire malloc ? 
+          strcpy(list->pt->adresse,adresse); // faire malloc ?
           break;
         }
       }
       tmp = tmp->next;
     }
   }
-  return list; 
+  return list;
 }
 
 
@@ -73,14 +74,14 @@ int computeDensity(double pointLat, double pointLong) {
   double lat, lon;
   char * trash = (char*)malloc(100);
   int density = 0;
-  if ( f == NULL) 
+  if ( f == NULL)
   {
     fprintf(stderr, "Erreur ouverture de fichier IGN \n ");
      // Code erreur a definir
   }
   else {
     while(fscanf(f, "%s;%lf;%lf\n", trash, &lat, &lon) == 3) {
-      if ( fabs(pointLat - lat) < 15 && fabs(pointLong - lon) < 15 ) { 
+      if ( fabs(pointLat - lat) < 15 && fabs(pointLong - lon) < 15 ) {
         density +=1;
       }
     }
@@ -123,11 +124,12 @@ void detectInterest(parcours * list, dataPoint * point) {
     listTemp = listTemp->next;
   } while (listTemp->next != NULL);
 
-  if (count >= INTEREST_RATE) 
+  if (count >= INTEREST_RATE)
   {
     // Appelle a la fonction remove Point de jeremy. en passant chacun des points.
-    point->adresse = "INTERET"; // Besoin d'allouer ou deja fait ? 
-    for (int i = 0; i<50; i++) {
+    point->adresse = "INTERET"; // Besoin d'allouer ou deja fait ?
+    int i;
+    for (i = 0; i<50; i++) {
       // removePoint(list, toBeDeleted[i]);
     }
   }
@@ -175,7 +177,7 @@ int removePoint(dataPoint * ptd, parcours * p){
   parcours *ptr_rech = (parcours *) malloc(sizeof(parcours)); // Pointeur de recherche
 
   parcours *ptr_trait = (parcours *) malloc(sizeof(parcours)); // Pointeur de traitement
-  
+
   ptr_trait = p->next;
 
   if (ptr_trait->pt->time == ptd->time){
