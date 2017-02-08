@@ -234,7 +234,7 @@ gboolean setPath(GtkWidget *widget, parcours* lp, int showRoutes){
             
 
 
-                if( strcmp(tmp->pt->adresse,"INTERET") && filters.displayIPoints){
+                if( strcmp(tmp->pt->adresse,"INTERET")== 0 && filters.displayIPoints){
                     setPoint(widget, tmp->pt->longitude, tmp->pt->latitude, 2); //Hack point au dessus des lignes
                     setLabel(widget, (tmp->pt->longitude+10), (tmp->pt->latitude-10), "Point d'interet");
                     if(tmp->next){
@@ -253,7 +253,7 @@ gboolean setPath(GtkWidget *widget, parcours* lp, int showRoutes){
                     setCircle(widget, tmp->pt->longitude, tmp->pt->latitude, 20);
                 }*/
 
-                if(strcmp(tmp->pt->adresse,"INTERET") && filters.displayIPoints){
+                if(strcmp(tmp->pt->adresse,"INTERET") == 0 && filters.displayIPoints){
                     setPoint(widget, tmp->pt->longitude, tmp->pt->latitude, 2);
                     setLabel(widget, (tmp->pt->longitude+10), (tmp->pt->latitude-10), "Point d'interet");
                 }
