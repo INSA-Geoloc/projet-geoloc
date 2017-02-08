@@ -10,10 +10,14 @@
 #include "graphic.h"
 
 extern parcours *original_data;
+extern parcours * img_point_data;
 extern GtkWidget *darea;
 extern menuFilters filters;
 extern parcours *animated_data;
 dataPoint *animated_point;
+extern parcours *deleted_data;
+
+cairo_surface_t *image = NULL;
 
 gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 {
@@ -71,15 +75,20 @@ void do_drawing(cairo_t *cr)
 {
     // HACK JFL: image draw test
     int w, h;
-    cairo_surface_t *image;
+    //cairo_surface_t *image = NULL;
 
     cairo_set_source_rgb(cr, 0, 0, 0);
     //cairo_set_line_width(cr, 0.5);
 
-    image = cairo_image_surface_create_from_png ("france_wikipedia.png");
+    //image = cairo_image_surface_create_from_png ("france_wikipedia.png");
+    if(image == NULL)
+    {
+      image = cairo_image_surface_create_from_png ("map_17.png");
+    }
+    //image = cairo_image_surface_create_from_png ("map_17.png");
     w = cairo_image_surface_get_width (image);
     h = cairo_image_surface_get_height (image);
-    cairo_scale(cr, 512.0/w, 512.0/h);
+    cairo_scale(cr, 1200.0/w, 743.0/h);
 
 
     cairo_set_source_surface (cr, image, 0, 0);
@@ -94,9 +103,13 @@ void do_drawing(cairo_t *cr)
     }
 
     glob.count = 0;
-    if(original_data != NULL && filters.displayPoints == 1)
+    if(original_data != NULL && original_data->next != NULL && filters.displayPoints == 1)
     {
-    	setPath(darea, original_data, filters.displayRoutes);
+    	setPath(darea, img_point_data, filters.displayRoutes);
+    }
+    if(original_data != NULL && deleted_data->next != NULL && filters.displayPoints == 1 && filters.displayDeletedPoints)
+    {
+        setPath(darea, deleted_data, 3);
     }
     cairo_stroke(cr);
 }
@@ -108,47 +121,28 @@ gboolean setPoint(GtkWidget *widget, double xp, double yp, int pointType){
 
     switch (pointType){
         case 0: //Point classique
-            cairo_arc(cr, xp, yp, 10.0, 0, 2*M_PI);
-            cairo_set_source_rgba(cr, 1, 0.2, 0.2, 1); //Fill colo
+            cairo_arc(cr, xp, yp, 5.0, 0, 2*M_PI);
+            cairo_set_source_rgba(cr, 0, 0.5, 1, 0.8); //Fill color blue
             break;
         case 1: //Point d'une autre couleur
-            cairo_arc(cr, xp, yp, 10.0, 0, 2*M_PI);
-            cairo_set_source_rgba(cr, 1, 0.8, 0.8, 1); //Fill colo
+            cairo_arc(cr, xp, yp, 5.0, 0, 2*M_PI);
+            cairo_set_source_rgba(cr, 1, 0.8, 0.8, 0.8); //Fill colo
             break;
 
         case 2: //Point d'interet
-            cairo_arc(cr, xp, yp, 20.0, 0, 2*M_PI);
-            cairo_set_source_rgba(cr, 1, 0.2, 0.8, 1); //Fill colo
+            cairo_arc(cr, xp, yp, 10.0, 0, 2*M_PI);
+            cairo_set_source_rgba(cr, 0, 0.5, 0.5, 0.8); //Fill colo
+            break;
+        case 3: //Point supprime
+            cairo_arc(cr, xp, yp, 5.0, 0, 2*M_PI);
+            cairo_set_source_rgba(cr, 1, 0.2, 0, 0.8); //Fill colo
             break;
         default:
-            cairo_arc(cr, xp, yp, 10.0, 0, 2*M_PI);
-            cairo_set_source_rgba(cr, 1, 0.2, 0.2, 1); //Fill colo
-
+            cairo_arc(cr, xp, yp, 5.0, 0, 2*M_PI);
+            cairo_set_source_rgba(cr, 0, 0.5, 1, 0.8); //Fill colo
     }
     cairo_close_path(cr);
-    cairo_set_line_width(cr, 2.0); //Border weight
-
-    /*if(pointType){
-        /*Ref sur la carte en x,y*/
-        /*double xRef = 20;
-        double yRef = 20;
-
-        double xLRef = 340;
-        double yLRef = 450;
-
-        double tmpX = (xRef * xp)/xLRef;
-        double tmpY = (yRef * yp)/yLRef;
-
-        xp = tmpX;
-        yp = tmpY;
-
-        cairo_set_source_rgba(cr, 1, 0.8, 0.8, 1); //Fill colo
-
-
-    }
-    else{
-        cairo_set_source_rgba(cr, 1, 0.2, 0.2, 1); //Fill colo
-    }*/
+    cairo_set_line_width(cr, 1.0); //Border weight
 
     cairo_fill_preserve(cr);
     cairo_set_source_rgba(cr, 0, 0, 0, 0.8); //Border color
@@ -169,13 +163,14 @@ gboolean setCircle(GtkWidget *widget, double xc, double yc, double taille){
     double angle1 = 0  * (M_PI/180.0);  // angles are specified
     double angle2 = 360.0 * (M_PI/180.0);  // in radians
 
+
     cairo_set_line_width(cr, 10.0);
     cairo_arc(cr, xc, yc, radius, angle1, angle2);
 
     cairo_close_path(cr);
 
-    cairo_set_line_width(cr, 5.0); //Border wight
-    cairo_set_source_rgba(cr, 1, 0.2, 0.2, 0.2); //Fill colo
+    cairo_set_line_width(cr, 2.0); //Border wight
+    cairo_set_source_rgba(cr, 1, 0.2, 0.2, 0.1); //Fill colo
     cairo_fill_preserve(cr);
     cairo_set_source_rgba(cr, 1, 0.2, 0.2, 1); //Border color
 
@@ -191,14 +186,13 @@ gboolean setLabel(GtkWidget *widget, double xl, double yl, char* text){
     cairo_t *cr;
 
     cr = gdk_cairo_create(gtk_widget_get_window(widget));
-    
+
     cairo_text_extents_t extents;
     char* utf8;
     if(text)
         utf8 = text;
     else
         utf8 = "Rue";
-    double x,y;
 
     cairo_select_font_face (cr, "Sans",
         CAIRO_FONT_SLANT_NORMAL,
@@ -211,28 +205,42 @@ gboolean setLabel(GtkWidget *widget, double xl, double yl, char* text){
     cairo_move_to (cr, (xl+10), (yl-10));
     cairo_show_text (cr, utf8);
 }
-
+int isDone = 0;
 gboolean setPath(GtkWidget *widget, parcours* lp, int showRoutes){
 		parcours * tmp = lp->next;
+
+        if(tmp == NULL){
+            printf("Erreur parcours nul\n");
+            return FALSE;
+        }
 
 		cairo_t *cr;
 
     	cr = gdk_cairo_create(gtk_widget_get_window(widget));
-
   		while(tmp->pt != NULL){
 
-            //pointToPoint(tmp->pt);
-            //printf("pt lambert%lf %lf\n", tmp->pt->longitude, tmp->pt->latitude);
-            //tmp->pt->adresse = "INTERET";
-            if(showRoutes){
+            if(tmp->pt->time == 1477056415 && isDone != 1 && !filters.displayDeletedPoints){
+                printf("J'en ai trouve un\n");
+                addPoint(tmp->pt, deleted_data);
+                isDone = 1;
+                removePoint(tmp->pt, img_point_data);
+            }
+
+            if(showRoutes == 1){
                 setPoint(widget, tmp->pt->longitude, tmp->pt->latitude, 0);
                 cairo_move_to(cr, tmp->pt->longitude, tmp->pt->latitude);
                 if(tmp->next) cairo_line_to(cr, tmp->next->pt->longitude, tmp->next->pt->latitude); else break;
                 cairo_stroke(cr);
+            
 
-                if(tmp->pt->adresse == "INTERET"){
+
+                if( strcmp(tmp->pt->adresse,"INTERET")== 0 && filters.displayIPoints){
                     setPoint(widget, tmp->pt->longitude, tmp->pt->latitude, 2); //Hack point au dessus des lignes
                     setLabel(widget, (tmp->pt->longitude+10), (tmp->pt->latitude-10), "Point d'interet");
+                    if(tmp->next){
+                        setPoint(widget, tmp->next->pt->longitude, tmp->next->pt->latitude, 2); //Hack point au dessus des lignes
+                        setLabel(widget, (tmp->next->pt->longitude+10), (tmp->next->pt->latitude-10), "Point d'interet");
+                    }
                 }
                 else{
                     setPoint(widget, tmp->pt->longitude, tmp->pt->latitude, 0);
@@ -240,15 +248,25 @@ gboolean setPath(GtkWidget *widget, parcours* lp, int showRoutes){
 
                 if(tmp->next) setPoint(widget, tmp->next->pt->longitude, tmp->next->pt->latitude, 0); else break;
             }else{
-                if(tmp->pt->adresse == "INTERET"){
+
+                /*if(filters.displayDeletedPoints){
+                    setCircle(widget, tmp->pt->longitude, tmp->pt->latitude, 20);
+                }*/
+
+                if(strcmp(tmp->pt->adresse,"INTERET") == 0 && filters.displayIPoints){
                     setPoint(widget, tmp->pt->longitude, tmp->pt->latitude, 2);
                     setLabel(widget, (tmp->pt->longitude+10), (tmp->pt->latitude-10), "Point d'interet");
                 }
                 else{
-                    setPoint(widget, tmp->pt->longitude, tmp->pt->latitude, 0);
+                    if(showRoutes == 3){ //pt suppr
+                        printf("Test setPath3\n");
+                        setPoint(widget, tmp->pt->longitude, tmp->pt->latitude, 3);
+                    }else{
+                        setPoint(widget, tmp->pt->longitude, tmp->pt->latitude, 0);    
+                    }
                 }
-            }
 
+            }
             if(tmp->next) tmp = tmp->next; else break;
         }
 
@@ -264,8 +282,6 @@ gboolean clicked(GtkWidget *widget, GdkEventButton *event, gpointer user_data)
         glob.coordx[glob.count] = event->x;
         glob.coordy[glob.count++] = event->y;
         printf("Left Click : %i\n", glob.count);
-        printf("%i / %i\n", glob.coordx[glob.count-1], glob.coordy[glob.count-1]);
-        printf("%i / %i\n", event->x, event->y);
     }
 
     if (event->button == 3) {

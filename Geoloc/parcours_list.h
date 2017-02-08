@@ -19,9 +19,21 @@ extern parcours* initParcours();
 // Ajoute un point en queue de liste
 extern void addPoint(dataPoint * pt, parcours * p);
 
+extern int removePoint(dataPoint * ptd, parcours * p);
+
 //Affichage de la liste
 extern void displayList(parcours * p);
 
 extern void destroyList(parcours * l);
+
+extern void GPStoLambertList();
+
+extern parcours * LambertToImg();
+
+char* getfield(char * line, int num);
+extern void readDb();
+int computeDensity(double pointLat, double pointLong);
+void cleanRedundantPoints();
+void detectInterest(dataPoint * point);
 
 #endif

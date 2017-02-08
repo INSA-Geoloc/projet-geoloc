@@ -12,6 +12,8 @@ struct {
 typedef struct {
 	int displayPoints;
 	int displayRoutes;
+	int displayIPoints;
+	int displayDeletedPoints;
 }menuFilters;
 
 //#define M_PI 3.14

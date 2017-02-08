@@ -1,0 +1,40 @@
+PROJET C
+Repère en 0,0
+
+GPS :
+Latitude : 47.09160136767937
+Longitude : 2.3810291290283203
+
+LAMBERT 93 :
+X EASTING , 653046,81
+Y NORTHING , 6665889,14
+
+Repère en bas a droite de la carte
+
+Latitude  47.073591283456 Longitude 2.4238747358322144
+
+LAMBERT 93
+X EASTING ,  656282,29
+Y NORTHING , 6663864,18
+
+
+Nouvelle maps
+
+0,0
+-------------------------
+longitude  2.364722639322281
+latitude  47.09886665282502
+
+Lambert
+X 651816,37
+Y 6666705,91
+
+
+En bas a droite
+-------------------------
+longitude  2.4354618787765503
+latitude  47.06904615782739
+
+Lambert
+X 657157,92
+Y 6663353,00
