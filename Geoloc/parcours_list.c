@@ -6,7 +6,7 @@
 #include "data.h"
 #include "parcours_list.h"
 
-#define INTEREST_RATE 100
+#define INTEREST_RATE 15
 
 extern parcours * original_data;
 extern parcours * deleted_data;
@@ -115,29 +115,29 @@ void cleanRedundantPoints() {
 
 void detectInterest(dataPoint * point) {
   parcours * listTemp = original_data->next;
-  dataPoint* toBeDeleted[50];
+  dataPoint* toBeDeleted[80];
   unsigned int count = 0;
 
   while (listTemp->next != NULL ) {
       printf("Coucou \n");
     if ( fabs(listTemp->pt->latitude - point->latitude ) < 30 && fabs(listTemp->pt->longitude - point->longitude ) < 30 )
     {
-      if (count < 50){
+      if (count < 80){
         toBeDeleted[count] = listTemp->pt;
       }
       count++;
     }
     listTemp = listTemp->next;
   } 
-      printf("Coucou 2 \n");
   if (count >= INTEREST_RATE)
   {
     // Appelle a la fonction remove Point de jeremy. en passant chacun des points.
     //point->adresse = "INTERET"; // Besoin d'allouer ou deja fait ?
     strcpy(point->adresse, "INTERET");
-    printf("J'ai mis un point d'interet \n");
+
+    printf("SALOPE\n %s" , point->adresse);
     int i;
-    for (i = 0; i<50; i++) {
+    for (i = 0; i<80; i++) {
       removePoint(toBeDeleted[i],original_data);
     }
   }

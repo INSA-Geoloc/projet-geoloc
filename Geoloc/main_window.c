@@ -259,11 +259,11 @@ void load_Data(char * filename)
 	GPStoLambertList(); //Conversion des données GPS en Lambert 93
 	//original_data = readDb(original_data);
   parcours * tmp = original_data->next;
-  /*while( tmp->next !=NULL){
+  while( tmp->next !=NULL){
 
     detectInterest(tmp->pt);
     tmp = tmp->next;
-  }*/
+  }
   cleanRedundantPoints();
 	img_point_data = LambertToImg();
   animated_data = img_point_data;
