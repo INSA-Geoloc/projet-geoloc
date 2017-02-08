@@ -35,9 +35,9 @@ parcours* readData(FILE * p){
 * A appeler avant de mettre les points à l'echelle
 * @param list liste de points avec coord en Lambert 
 */
-parcours* readDb( parcours * list) 
+void readDb() 
 {
-  parcours * tmp = list;
+  parcours * tmp = original_data;
   FILE * f = fopen("IGN.csv","r");
   double lat, lon;
   char * adresse = (char*) malloc(60);
@@ -51,16 +51,15 @@ parcours* readDb( parcours * list)
     while( tmp->next != NULL) {
       while(fscanf(f, "%s,%lf,%lf\n", adresse, &lat, &lon) == 3) {
         printf("Adresse : %s \n", adresse);
-        if ( fabs(list->pt->latitude - lat)< 2 && fabs(list->pt->longitude - lon) < 2){
-          list->pt->adresse = (char*)malloc(strlen(adresse));
-          strcpy(list->pt->adresse,adresse); // faire malloc ? 
+        if ( fabs(tmp->pt->latitude - lat)< 2 && fabs(tmp->pt->longitude - lon) < 2){
+          tmp->pt->adresse = (char*)malloc(strlen(adresse));
+          strcpy(tmp->pt->adresse,adresse); // faire malloc ? 
           break;
         }
       }
       tmp = tmp->next;
     }
   }
-  return list; 
 }
 
 

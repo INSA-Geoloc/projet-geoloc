@@ -257,7 +257,7 @@ void choose_File(GtkWidget *item, gpointer data)
 
 int main(int argc, char *argv[]) {
   //printf("%d \n", computeDensity( 653046.81, 6665889.14));
-  readDb(initParcours());
+  //readDb(initParcours());
 
   //GtkWidget *window;
   GtkWidget *vbox;
