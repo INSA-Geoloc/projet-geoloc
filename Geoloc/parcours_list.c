@@ -119,13 +119,17 @@ void detectInterest(dataPoint * point) {
   unsigned int count = 0;
 
   while (listTemp->next != NULL ) {
-      printf("Coucou \n");
+      //printf("Coucou \n");
     if ( fabs(listTemp->pt->latitude - point->latitude ) < 30 && fabs(listTemp->pt->longitude - point->longitude ) < 30 )
     {
-      if (count < 80){
-        toBeDeleted[count] = listTemp->pt;
+      if(listTemp->pt->latitude != point->latitude && listTemp->pt->longitude != point->longitude && strcmp(listTemp->pt->adresse, "INTERET") != 0){
+        if (count < 80){
+          toBeDeleted[count] = listTemp->pt;
+        }
+        count++;
+      }else{
+        printf("C'est moi\n");
       }
-      count++;
     }
     listTemp = listTemp->next;
   } 
@@ -135,7 +139,7 @@ void detectInterest(dataPoint * point) {
     //point->adresse = "INTERET"; // Besoin d'allouer ou deja fait ?
     strcpy(point->adresse, "INTERET");
 
-    printf("SALOPE\n %s" , point->adresse);
+    printf("SALOPE %s \n" , point->adresse);
     int i;
     for (i = 0; i<80; i++) {
       removePoint(toBeDeleted[i],original_data);
@@ -207,11 +211,10 @@ int removePoint(dataPoint * ptd, parcours * p){
           //free(ptr_rech);
           return 1;
       }else{
-          printf("Pas trouve (%i != %i) passe au suivant\n", ptr_rech->pt->time, ptd->time);
+          //printf("Pas trouve (%i != %i) passe au suivant\n", ptr_rech->pt->time, ptd->time);
 
           if(ptr_rech->next == NULL){
             printf("Non trouve \n");
-            printf("testRemove9\n");
             return 0;
           }
           ptr_trait = ptr_rech;
@@ -309,5 +312,44 @@ parcours * LambertToImg()
     if(original_data->next) original_data = original_data->next; else break;
   }
     original_data = tmp;
+  return list_img_point;
+}
+
+parcours * LambertToDelImg()
+{
+  parcours * tmp = deleted_data;
+  deleted_data = deleted_data->next;
+  parcours * list_img_point;
+
+  list_img_point = initParcours();
+
+  //coordonnées lambert en 0,0
+  double one_x = 651816.37;
+  double one_y = 6666705.91;
+
+  //Coordonnées lambert en bas à droite de la carte
+  double two_x = 657157.92;
+  double two_y = 6663353.00;
+
+  double limit_x = two_x - one_x;
+  double limit_y = two_y - one_y;
+
+  dataPoint* img_point;
+
+  while(deleted_data->pt != NULL){
+    //longitude --> X
+    //latitude --> Y
+
+    if(deleted_data->pt->longitude - one_x <= limit_x  || deleted_data->pt->latitude <= one_y > limit_y)
+    {
+      double img_x = (deleted_data->pt->longitude - one_x) * 1200 / limit_x;
+      double img_y = (deleted_data->pt->latitude - one_y) * 743 / limit_y;
+
+      img_point = newPoint(deleted_data->pt->time, img_y, img_x);
+      addPoint(img_point, list_img_point);
+    }
+    if(deleted_data->next) deleted_data = deleted_data->next; else break;
+  }
+    deleted_data = tmp;
   return list_img_point;
 }

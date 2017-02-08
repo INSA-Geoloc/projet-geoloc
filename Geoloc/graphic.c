@@ -16,6 +16,7 @@ extern menuFilters filters;
 extern parcours *animated_data;
 dataPoint *animated_point;
 extern parcours *deleted_data;
+extern dataPoint *deleting_point;
 
 cairo_surface_t *image = NULL;
 
@@ -28,6 +29,10 @@ gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 gboolean animatePath(){
     cairo_t *cr;
     cr = gdk_cairo_create(gtk_widget_get_window(darea));
+
+    if(filters.stopAnimation == 1){
+        return FALSE; //On stoppe l'animation
+    }
 
     printf("Je suis appele\n");
     if(!animated_data){
@@ -249,20 +254,28 @@ gboolean setPath(GtkWidget *widget, parcours* lp, int showRoutes){
                 if(tmp->next) setPoint(widget, tmp->next->pt->longitude, tmp->next->pt->latitude, 0); else break;
             }else{
 
-                /*if(filters.displayDeletedPoints){
-                    setCircle(widget, tmp->pt->longitude, tmp->pt->latitude, 20);
-                }*/
-
                 if(strcmp(tmp->pt->adresse,"INTERET") == 0 && filters.displayIPoints){
+                    printf("Je suis un interet\n");
                     setPoint(widget, tmp->pt->longitude, tmp->pt->latitude, 2);
                     setLabel(widget, (tmp->pt->longitude+10), (tmp->pt->latitude-10), "Point d'interet");
                 }
                 else{
                     if(showRoutes == 3){ //pt suppr
                         printf("Test setPath3\n");
+                        printf("%lf / %lf\n", tmp->pt->longitude, tmp->pt->latitude);
                         setPoint(widget, tmp->pt->longitude, tmp->pt->latitude, 3);
                     }else{
                         setPoint(widget, tmp->pt->longitude, tmp->pt->latitude, 0);    
+                    }
+                }
+
+                if(filters.editionMode == 1 /*&& strcmp(tmp->pt->adresse,"INTERET") == 0 && deleting_point == NULL*/){
+                    printf("Il y a des choses à faire\n");
+                    if(deleting_point == NULL){
+                        setCircle(widget, tmp->pt->longitude, tmp->pt->latitude, 20);
+                        deleting_point = newPoint(tmp->pt->time, tmp->pt->latitude, tmp->pt->longitude);
+                    }else if(tmp->pt->time == deleting_point->time){
+                        setCircle(widget, tmp->pt->longitude, tmp->pt->latitude, 20);
                     }
                 }
 

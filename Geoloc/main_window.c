@@ -18,6 +18,8 @@ GtkWidget *window;
 parcours * animated_data = NULL;
 parcours *deleted_data = NULL;
 
+dataPoint *deleting_point; //point contenant un point d'interet a supprimer
+
 /*
 * Structure pour les filtres tous les filters sont implémentés dans graphic.h
 * Toutes les valeurs sont initialisés à 0 par défaut
@@ -167,21 +169,26 @@ void deletedPointsDisplayMiEvent (GtkWidget *widget, gpointer *data)
 
 void anonymatChoiceMiEvent (GtkWidget *widget, gpointer *data)
 {
-  GtkResponseType result;
-  GtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT;
-  GtkWidget* dialog = gtk_message_dialog_new (window ,
+  if (filters.editionMode != 1){
+    GtkResponseType result;
+    GtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT;
+    GtkWidget* dialog = gtk_message_dialog_new (window ,
                                  flags,
                                  GTK_MESSAGE_QUESTION,
                                  GTK_BUTTONS_YES_NO,
-                                 "Le point va être supprimé ainsi que les points présents dans le cercle d'anonymisation");
+                                 "Le mode edition a été activé, un cercle d'anonymisation a été mis sur le point a supprimer pour le supprimer choisir 'Supprimer un point d'interêt' dans le menu.");
 
   result = gtk_dialog_run(GTK_DIALOG (dialog));
 
   gtk_widget_destroy(dialog);
-  if(result == GTK_RESPONSE_YES)
-  {
-    //Recuperer le pt encerclé et le suppr de img_data pour le mettre dans deleted_data
-    printf("Salut j'ai bien suppr ton pt\n");
+
+    filters.editionMode = 1;
+    filters.displayRoutes = 0;
+    gtk_check_menu_item_set_active(routesDisplayMi, 0);
+    gtk_check_menu_item_set_active(deletedPointsDisplayMi, 0);
+
+  }else{
+    printf("Tu es déjà en mode edition\n");
   }
 }
 
@@ -202,6 +209,16 @@ void anonymatMiEvent (GtkWidget *widget, gpointer *data)
   {
     //Recuperer le pt encerclé et le suppr de img_data pour le mettre dans deleted_data
     printf("Salut j'ai bien suppr ton pt\n");
+    if (filters.editionMode == 1 && deleting_point != NULL){
+      removePoint(deleting_point, img_point_data);
+      addPoint(deleting_point, deleted_data);
+      filters.editionMode = 0;
+      deleting_point = NULL;
+    }else{
+      printf("Action impossible : sorti du mode edition\n");
+      filters.editionMode = 0;
+      deleting_point = NULL;
+    }
   }
 }
 
@@ -210,12 +227,25 @@ void playMiEvent (GtkWidget *widget, gpointer *data)
   gtk_widget_queue_draw(widget);
   filters.displayPoints = 0;
   gtk_check_menu_item_set_active(pointsDisplayMi, 0);
-
-    if(!animated_data->next){
+  printf("testseg\n");
+    if(!animated_data->next || filters.stopAnimation == 1){
       printf("Tu as deja fait une animation\n");
       animated_data = img_point_data;
+      filters.stopAnimation = 0;
     }
+    printf("testseg\n");
     g_timeout_add(100, G_CALLBACK(animatePath), NULL);
+
+  gtk_widget_queue_draw(darea);
+}
+
+void stopMiEvent (GtkWidget *widget, gpointer *data)
+{
+  if(filters.stopAnimation == 1){
+    printf("deja envoye");
+  }else{
+    filters.stopAnimation = 1;
+  }
 
   gtk_widget_queue_draw(darea);
 }
@@ -259,13 +289,14 @@ void load_Data(char * filename)
 	GPStoLambertList(); //Conversion des données GPS en Lambert 93
 	//original_data = readDb(original_data);
   parcours * tmp = original_data->next;
-  while( tmp->next !=NULL){
+  /*while( tmp->next !=NULL){
 
     detectInterest(tmp->pt);
     tmp = tmp->next;
-  }
+  }*/
   cleanRedundantPoints();
 	img_point_data = LambertToImg();
+  deleted_data = LambertToDelImg();
   animated_data = img_point_data;
   fclose(file);
 }
@@ -348,6 +379,8 @@ int main(int argc, char *argv[]) {
 
   //Annimations
   GtkWidget *playMi;
+  GtkWidget *stopMi;
+
 
   glob.count = 0;
 
@@ -410,9 +443,11 @@ int main(int argc, char *argv[]) {
   animationMenu = gtk_menu_new();
   animationMi = gtk_menu_item_new_with_label("Animations");
   playMi = gtk_menu_item_new_with_label("Play");
+  stopMi = gtk_menu_item_new_with_label("Stop");
 
   gtk_menu_item_set_submenu(GTK_MENU_ITEM(animationMi), animationMenu);
   gtk_menu_shell_append(GTK_MENU_SHELL(animationMenu), playMi);
+  gtk_menu_shell_append(GTK_MENU_SHELL(animationMenu), stopMi);
   gtk_menu_shell_append(GTK_MENU_SHELL(menubar3), animationMi);
   gtk_box_pack_start(GTK_BOX(vbox), menubar3, FALSE, FALSE, 0);
 
@@ -484,6 +519,8 @@ int main(int argc, char *argv[]) {
 
   g_signal_connect (G_OBJECT (playMi), "activate",
         G_CALLBACK (playMiEvent), playMi);
+  g_signal_connect (G_OBJECT (stopMi), "activate",
+        G_CALLBACK (stopMiEvent), stopMi);
 
 
 
