@@ -2,8 +2,11 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <string.h>
+#include <math.h>
 #include "data.h"
 #include "parcours_list.h"
+
+#define INTEREST_RATE 15
 
 extern parcours * original_data;
 /**
@@ -27,6 +30,109 @@ parcours* readData(FILE * p){
    }
    return lp;
 }
+
+/*
+* A appeler avant de mettre les points à l'echelle
+* @param list liste de points avec coord en Lambert
+*/
+void readDb() 
+{
+  parcours * tmp = original_data;
+  FILE * f = fopen("IGN.csv","r");
+  double lat, lon;
+  char * adresse = (char*) malloc(60);
+
+  if ( f == NULL)
+  {
+    fprintf(stderr, "Erreur ouverture de fichier IGN \n ");
+  }
+  else
+  {
+    while( tmp->next != NULL) {
+      while(fscanf(f, "%s,%lf,%lf\n", adresse, &lat, &lon) == 3) {
+        printf("Adresse : %s \n", adresse);
+        if ( fabs(tmp->pt->latitude - lat)< 2 && fabs(tmp->pt->longitude - lon) < 2){
+          tmp->pt->adresse = (char*)malloc(strlen(adresse));
+          strcpy(tmp->pt->adresse,adresse); // faire malloc ? 
+          break;
+        }
+      }
+      tmp = tmp->next;
+    }
+  }
+}
+
+
+/*
+* Calcul le nombre d'habitation dans la base IGN à proximité des coords données.
+* A voir si besoin de passsé la valeur du nb de metre en param.
+*/
+int computeDensity(double pointLat, double pointLong) {
+  FILE * f = fopen("IGN.csv","r");
+  double lat, lon;
+  char * trash = (char*)malloc(100);
+  int density = 0;
+  if ( f == NULL)
+  {
+    fprintf(stderr, "Erreur ouverture de fichier IGN \n ");
+     // Code erreur a definir
+  }
+  else {
+    while(fscanf(f, "%s;%lf;%lf\n", trash, &lat, &lon) == 3) {
+      if ( fabs(pointLat - lat) < 15 && fabs(pointLong - lon) < 15 ) {
+        density +=1;
+      }
+    }
+  }
+  return density;
+}
+
+void cleanRedundantPoints(parcours * list) {
+  dataPoint * tmp;
+  parcours * listTemp = list;
+
+  while (listTemp->next != NULL) {
+    if( fabs(listTemp->pt->longitude - listTemp->next->pt->longitude)< 2 && fabs(listTemp->pt->latitude - listTemp->next->pt->latitude) < 2 ) {
+      // We clean the next point.
+      if (listTemp->next->next != NULL) { // There is a point after the one we want to delete
+        //destroyPoint(list->next->pt);
+        listTemp->next = listTemp->next->next;
+      } else {
+        // Next point is last point.
+        listTemp->next = NULL;
+      }
+    }
+    listTemp = listTemp->next;
+  }
+}
+
+void detectInterest(parcours * list, dataPoint * point) {
+  parcours * listTemp = list;
+  dataPoint* toBeDeleted[50];
+  unsigned int count = 0;
+
+  do {
+    if ( fabs(listTemp->pt->latitude - point->latitude ) < 15 && fabs(listTemp->pt->longitude - point->longitude ) < 15 )
+    {
+      if (count < 50){
+        toBeDeleted[count] = listTemp->pt;
+      }
+      count++;
+    }
+    listTemp = listTemp->next;
+  } while (listTemp->next != NULL);
+
+  if (count >= INTEREST_RATE)
+  {
+    // Appelle a la fonction remove Point de jeremy. en passant chacun des points.
+    point->adresse = "INTERET"; // Besoin d'allouer ou deja fait ?
+    int i;
+    for (i = 0; i<50; i++) {
+      // removePoint(list, toBeDeleted[i]);
+    }
+  }
+}
+
 
 /**
  * @brief Initialise une liste vide
@@ -69,7 +175,7 @@ int removePoint(dataPoint * ptd, parcours * p){
   parcours *ptr_rech = (parcours *) malloc(sizeof(parcours)); // Pointeur de recherche
 
   parcours *ptr_trait = (parcours *) malloc(sizeof(parcours)); // Pointeur de traitement
-  
+
   ptr_trait = p->next;
 
   if (ptr_trait->pt->time == ptd->time){

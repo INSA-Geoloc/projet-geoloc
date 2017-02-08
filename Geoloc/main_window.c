@@ -257,6 +257,7 @@ void load_Data(char * filename)
   original_data = readData(file);
   deleted_data = initParcours();
 	GPStoLambertList(); //Conversion des données GPS en Lambert 93
+	//original_data = readDb(original_data);
 	img_point_data = LambertToImg();
   animated_data = img_point_data;
   fclose(file);
@@ -299,6 +300,8 @@ void choose_File(GtkWidget *item, gpointer data)
 
 
 int main(int argc, char *argv[]) {
+  //printf("%d \n", computeDensity( 653046.81, 6665889.14));
+  //readDb(initParcours());
 
   //GtkWidget *window;
   GtkWidget *vbox;
