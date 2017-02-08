@@ -219,12 +219,7 @@ gboolean setPath(GtkWidget *widget, parcours* lp, int showRoutes){
     	cr = gdk_cairo_create(gtk_widget_get_window(widget));
   		while(tmp->pt != NULL){
 
-<<<<<<< HEAD
-            if(tmp->pt->time == 1481225826 && isDone != 1 && !filters.displayCircles){
-                //printf(" Desnité : %d \n", computeDensity(tmp->pt->latitude,tmp->pt->longitude));
-=======
             if(tmp->pt->time == 1477056415 && isDone != 1 && !filters.displayDeletedPoints){
->>>>>>> 2930774f06968de087feb2dde9f31dc48dbcc276
                 printf("J'en ai trouve un\n");
                 addPoint(tmp->pt, deleted_data);
                 isDone = 1;
@@ -236,15 +231,7 @@ gboolean setPath(GtkWidget *widget, parcours* lp, int showRoutes){
                 cairo_move_to(cr, tmp->pt->longitude, tmp->pt->latitude);
                 if(tmp->next) cairo_line_to(cr, tmp->next->pt->longitude, tmp->next->pt->latitude); else break;
                 cairo_stroke(cr);
-
-                /*if(filters.displayCircles){
-                    setCircle(widget, tmp->pt->longitude, tmp->pt->latitude, 20);
-                    if(tmp->next) setCircle(widget, tmp->next->pt->longitude, tmp->next->pt->latitude, 20); else break;
-<<<<<<< HEAD
-                }
-=======
-                }*/
->>>>>>> 2930774f06968de087feb2dde9f31dc48dbcc276
+            
 
 
                 if( strcmp(tmp->pt->adresse,"INTERET") && filters.displayIPoints){
