@@ -30,6 +30,7 @@ extern void GPStoLambertList();
 
 extern parcours * LambertToImg();
 
+char* getfield(char * line, int num);
 extern void readDb();
 int computeDensity(double pointLat, double pointLong);
 void cleanRedundantPoints(parcours * list);
