@@ -33,13 +33,34 @@ parcours* readData(FILE * p){
 }
 
 /*
+* Fonction utilisé uniquement dans la fonction readDb pour lire le fichier CSV
+*
+*/
+char* getfield(char * line, int num)
+{
+  char * tok;
+  for( tok = strtok(line, ","); tok && *tok; tok = strtok(NULL, ",\n"))
+  {
+    if(!--num)
+      return tok;
+  }
+  return NULL;
+}
+
+
+/*
 * A appeler avant de mettre les points à l'echelle
 * @param list liste de points avec coord en Lambert
 */
-void readDb() 
+/*
+* A appeler avant de mettre les points à l'echelle
+* @param list liste de points avec coord en Lambert
+*/
+void readDb()
 {
-  parcours * tmp = original_data;
+  parcours * tmp = original_data->next;
   FILE * f = fopen("IGN.csv","r");
+  char buffer[1024], *tmpbuf;
   double lat, lon;
   char * adresse = (char*) malloc(60);
 
@@ -50,19 +71,37 @@ void readDb()
   else
   {
     while( tmp->next != NULL) {
-      //strtok
-      while(fscanf(f, "%s,%lf,%lf\n", adresse, &lat, &lon) == 3) {
+      while(fgets(buffer, 1024, f))
+      {
+        //rempli la latitude
+        tmpbuf = strdup(buffer);
+        sscanf(getfield(tmpbuf, 1), "%lf", &lon);
+
+        //rempli la longitude
+        tmpbuf = strdup(buffer);
+        sscanf(getfield(tmpbuf, 2), "%lf", &lat);
+
+        //rempli l'adresse
+        tmpbuf = strdup(buffer);
+        adresse = getfield(tmpbuf, 3);
+        //while(fscanf(f, "%lf;%lf;%[^;]\n", &lat, &lon, adresse) == 3) {
         printf("Adresse : %s \n", adresse);
+        printf("%lf %lf\n",lon , tmp->pt->longitude);
+        printf("%lf  %lf\n ",lat ,tmp->pt->latitude);
+
         if ( fabs(tmp->pt->latitude - lat)< 2 && fabs(tmp->pt->longitude - lon) < 2){
+          printf("Je suis dans readDb\n" );
           //tmp->pt->adresse = (char*)malloc(strlen(adresse));
-          strcpy(tmp->pt->adresse,adresse); // faire malloc ? 
+          strcpy(tmp->pt->adresse,adresse); // faire malloc ?
           break;
         }
       }
       tmp = tmp->next;
     }
   }
+  fclose(f);
 }
+
 
 
 /*
@@ -85,6 +124,7 @@ int computeDensity(double pointLat, double pointLong) {
         density +=1;
       }
     }
+    fclose(f);
   }
   return density;
 }
@@ -99,8 +139,6 @@ void cleanRedundantPoints() {
   parcours *previous = NULL;
   while (listTemp->next != NULL) {
     suiv = listTemp->next;
-    printf("%f \n",fabs(listTemp->pt->longitude - suiv->pt->longitude));
-    printf("%f\n",fabs(listTemp->pt->latitude - suiv->pt->latitude));
     if( fabs(listTemp->pt->longitude - suiv->pt->longitude)< 30 && fabs(listTemp->pt->latitude - suiv->pt->latitude) < 30 
     && strcmp(listTemp->pt->adresse,"INTERET")!=0 ) {
       if(previous != NULL) { // First point
@@ -137,7 +175,7 @@ void detectInterest(dataPoint * point) {
   unsigned int count = 0;
 
   while (listTemp->next != NULL ) {
-      //printf("Coucou \n");
+
     if ( fabs(listTemp->pt->latitude - point->latitude ) < 30 && fabs(listTemp->pt->longitude - point->longitude ) < 30 )
     {
       if(listTemp->pt->latitude != point->latitude && listTemp->pt->longitude != point->longitude && strcmp(listTemp->pt->adresse, "INTERET") != 0){
@@ -145,8 +183,6 @@ void detectInterest(dataPoint * point) {
           toBeDeleted[count] = listTemp->pt;
         }
         count++;
-      }else{
-        printf("C'est moi\n");
       }
     }
     listTemp = listTemp->next;
@@ -156,7 +192,6 @@ void detectInterest(dataPoint * point) {
     // Appelle a la fonction remove Point de jeremy. en passant chacun des points.
     //point->adresse = "INTERET"; // Besoin d'allouer ou deja fait ?
     strcpy(point->adresse, "INTERET");
-    printf("SALOPE %s %d \n" , point->adresse, strcmp(point->adresse, "INTERET"));
     int i;
     for (i = 0; i<80; i++) {
       //removePoint(toBeDeleted[i],original_data);
@@ -210,7 +245,6 @@ int removePoint(dataPoint * ptd, parcours * p){
   ptr_trait = p->next;
 
   if (ptr_trait->pt->time == ptd->time){
-      printf("Debut trouve \n");
       p->next = p->next->next;
       p->size--;
       //free(ptr_trait);
@@ -221,10 +255,7 @@ int removePoint(dataPoint * ptd, parcours * p){
       if(ptr_rech->pt->time == ptd->time){
           printf("%i trouve (%i) \n", ptr_rech->pt->time, ptd->time);
           ptr_trait->next = ptr_rech->next;
-          printf("testT\n");
           p->size--;
-          printf("TestG\n");
-          printf("TestV\n");
           //free(ptr_rech);
           return 1;
       }else{
@@ -239,7 +270,6 @@ int removePoint(dataPoint * ptd, parcours * p){
       }
 
   }
-  printf("testRemove77\n");
   free(ptr_rech);
   free(ptr_trait);
   return 0;
