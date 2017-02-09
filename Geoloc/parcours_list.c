@@ -10,12 +10,12 @@
 
 extern parcours * original_data;
 extern parcours * deleted_data;
+
 /**
  * @brief Lecture du fichier Geolog
  * @param p descripteur de fichier -> ouverture d'un fichier
  * @return parcours*
  */
-
 parcours* readData(FILE * p){
    dataPoint* read_mat;
    int i,j, date;
@@ -32,9 +32,9 @@ parcours* readData(FILE * p){
    return lp;
 }
 
+
 /*
-* Fonction utilisé uniquement dans la fonction readDb pour lire le fichier CSV
-*
+* @brief Fonction utilisé pour essayer de parser le fichier csv.
 */
 char* getfield(char * line, int num)
 {
@@ -49,12 +49,8 @@ char* getfield(char * line, int num)
 
 
 /*
-* A appeler avant de mettre les points à l'echelle
-* @param list liste de points avec coord en Lambert
-*/
-/*
-* A appeler avant de mettre les points à l'echelle
-* @param list liste de points avec coord en Lambert
+* @brief Algorithme de lecture de la base IGN, 
+* Cherche si des points de la lise correspondent à ceux de la base IGN pou remplir leur champ adresse.
 */
 void readDb()
 {
@@ -90,9 +86,8 @@ void readDb()
         printf("%lf  %lf\n ",lat ,tmp->pt->latitude);
 
         if ( fabs(tmp->pt->latitude - lat)< 2 && fabs(tmp->pt->longitude - lon) < 2){
-          printf("Je suis dans readDb\n" );
           //tmp->pt->adresse = (char*)malloc(strlen(adresse));
-          strcpy(tmp->pt->adresse,adresse); // faire malloc ?
+          strcpy(tmp->pt->adresse,adresse); 
           break;
         }
       }
@@ -105,8 +100,10 @@ void readDb()
 
 
 /*
-* Calcul le nombre d'habitation dans la base IGN à proximité des coords données.
-* A voir si besoin de passsé la valeur du nb de metre en param.
+* @brief Calcul le nombre d'habitation dans la base IGN à proximité des coords données.
+* @param pointLat Latitude pour la quelle chercher dans la base IGN
+* @param pointLong longitude pour la quelle chercher dans la base IGN
+* @return densité correspondante dans la base IGN.
 */
 int computeDensity(double pointLat, double pointLong) {
   FILE * f = fopen("IGN.csv","r");
@@ -130,8 +127,8 @@ int computeDensity(double pointLat, double pointLong) {
 }
 
 /*
-* Faire en sorte que on regarde un point est tant qu'il y a des points à portées on les supprimer
-* Aprés on passe au points suivants.
+* @brief Fonction de nettoyage de la trame.
+* parcours la liste à la recherche de point à supprimer
 */
 void cleanRedundantPoints() {
   parcours * listTemp = original_data->next;
@@ -152,6 +149,10 @@ void cleanRedundantPoints() {
   }
 }
 
+/*
+* @brief Fonction de correction des points d'interets.
+* Fusionne les points d'interets s'ils se trouvent trop proche.
+*/
 void correctInterest() {
   parcours * tmp = original_data->next;
   parcours * tmp2 ;
@@ -169,6 +170,11 @@ void correctInterest() {
   }
 }
 
+
+/*
+* @brief Algorithme de detection des points d'interets
+* @param point le point pour lequel chercher s'il doit être considéré comme un point d'interet
+*/
 void detectInterest(dataPoint * point) {
   parcours * listTemp = original_data->next;
   dataPoint* toBeDeleted[80];
@@ -236,6 +242,13 @@ void addPoint(dataPoint * ptd, parcours * p){
    }
 }
 
+
+/**
+* @brief fonction de suppression d'un point dans une liste.
+* Recherche le point en parametre et le supprime de la liste.
+* @param ptd pointeur sur le point à supprimer
+* @param p pointeur sur la liste dans laquelle le point doit être supprimer
+*/
 int removePoint(dataPoint * ptd, parcours * p){
   dataPoint *test;
   parcours *ptr_rech = (parcours *) malloc(sizeof(parcours)); // Pointeur de recherche
@@ -310,7 +323,10 @@ void destroyList(parcours * pl){
 
 }
 
-
+/**
+* @brief Converti la liste original des données, de GPS à Lambert93
+*
+*/
 void GPStoLambertList()
 {
   parcours * tmp = original_data;
@@ -323,6 +339,11 @@ void GPStoLambertList()
   original_data = tmp;
 }
 
+
+/**
+* @brief Crée une liste de points, avec des coordonnées mise à l'échelle de la carte.
+* @return une nouvelle liste à l'échelle de la carte.
+*/
 parcours * LambertToImg()
 {
   parcours * tmp = original_data;
