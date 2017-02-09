@@ -1,3 +1,6 @@
+/**
+ * Pour compiler :  gcc *.c -o prog `pkg-config --cflags --libs gtk+-3.0` `pkg-config --cflags cairo`
+ */
 #include <cairo.h>
 #include <gtk/gtk.h>
 #include <stdio.h>
@@ -11,20 +14,20 @@
 #include "graphic.h"
 #include <unistd.h>
 
-parcours *original_data = NULL;
-parcours *img_point_data;
-GtkWidget *darea;
-GtkWidget *window;
+parcours *original_data = NULL; //Liste des points importés du fichier
+parcours *img_point_data; //Liste des poinst affichables sur la carte
+GtkWidget *darea; //Zone de dessin
+GtkWidget *window; //Fenêtre principale
 parcours *animated_data = NULL;
 parcours *deleted_data = NULL;
 
 dataPoint *deleting_point; //point contenant un point d'interet a supprimer
 
 /*
-* Structure pour les filtres tous les filters sont implémentés dans graphic.h
-* Toutes les valeurs sont initialisés à 0 par défaut
-* Fonctionnement booléen : 0 les données ne sont pas à afficher | 1 les données sont à afficher
-*/
+ * Structure pour les filtres tous les filters sont implémentés dans graphic.h
+ * Toutes les valeurs sont initialisés à 0 par défaut
+ * Fonctionnement booléen : 0 les données ne sont pas à afficher | 1 les données sont à afficher
+ */
 menuFilters filters;
 
 //Sous menu
@@ -36,6 +39,10 @@ GtkWidget *deletedPointsDisplayMi;
 GtkWidget *anonymatChoiceMi;
 GtkWidget *anonymatMi;
 
+/*
+ * @brief Appelé lors du click sur "affichage des points"
+ * Active ou descative l'indice d'affichage des points
+ */
 void pointsDisplayMiEvent(GtkWidget *widget, gpointer *data)
 {
   int isactive = gtk_check_menu_item_get_active(data);
@@ -64,10 +71,13 @@ void pointsDisplayMiEvent(GtkWidget *widget, gpointer *data)
     gtk_check_menu_item_set_active(pointInteretDisplayMi, 0);
     gtk_check_menu_item_set_active(deletedPointsDisplayMi, 0);
   }
-
   gtk_widget_queue_draw(darea);
 }
 
+/*
+ * @brief Appelé lors du click sur "affichage des routes"
+ * Active ou descative l'indice d'affichage des routes
+ */
 void routesDisplayMiEvent(GtkWidget *widget, gpointer *data)
 {
   int isactive = gtk_check_menu_item_get_active(data);
@@ -98,10 +108,13 @@ void routesDisplayMiEvent(GtkWidget *widget, gpointer *data)
   {
     filters.displayRoutes = 0;
   }
-
   gtk_widget_queue_draw(darea);
 }
 
+/*
+ * @brief Appelé lors du click sur "affichage des points d'intérêts"
+ * Active ou descative l'indice d'affichage des points d'intérêts
+ */
 void pointInteretDisplayMiEvent(GtkWidget *widget, gpointer *data)
 {
   int isactive = gtk_check_menu_item_get_active(data);
@@ -132,10 +145,13 @@ void pointInteretDisplayMiEvent(GtkWidget *widget, gpointer *data)
   {
     filters.displayIPoints = 0;
   }
-
   gtk_widget_queue_draw(darea);
 }
 
+/*
+ * @brief Appelé lors du click sur "supprimer un point d'intérêt"
+ * Effectue les traitements nécessaires
+ */
 void deletedPointsDisplayMiEvent(GtkWidget *widget, gpointer *data)
 {
   int isactive = gtk_check_menu_item_get_active(data);
@@ -166,7 +182,6 @@ void deletedPointsDisplayMiEvent(GtkWidget *widget, gpointer *data)
   {
     filters.displayDeletedPoints = 0;
   }
-
   gtk_widget_queue_draw(darea);
 }
 
@@ -238,6 +253,10 @@ void anonymatMiEvent(GtkWidget *widget, gpointer *data)
   }
 }
 
+/*
+ * @brief Appelé lors du click sur "Play"
+ * Effectue les traitements nécessaires
+ */
 void playMiEvent(GtkWidget *widget, gpointer *data)
 {
   gtk_widget_queue_draw(widget);
@@ -254,6 +273,10 @@ void playMiEvent(GtkWidget *widget, gpointer *data)
   gtk_widget_queue_draw(darea);
 }
 
+/*
+ * @brief Appelé lors du click sur "Stop"
+ * Effectue les traitements nécessaires
+ */
 void stopMiEvent(GtkWidget *widget, gpointer *data)
 {
   if (filters.stopAnimation == 1)
@@ -268,6 +291,10 @@ void stopMiEvent(GtkWidget *widget, gpointer *data)
   gtk_widget_queue_draw(darea);
 }
 
+/*
+ * @brief Ouvre une fenêtre de dialogue demandant à l'utilisateur si il désire afficher les points ou non
+ * Effectue les traitements en conséquences
+ */
 void on_data_loaded()
 {
   GtkResponseType result;
@@ -292,9 +319,12 @@ void on_data_loaded()
   }
 }
 
+/*
+ * @brief Ouvre et charge les données du fichier @filename
+ * Effectue les principaux traitement sur les données
+ */
 void load_Data(char *filename)
 {
-
   FILE *file;
   file = fopen(filename, "r");
   if (file == NULL)
@@ -305,8 +335,7 @@ void load_Data(char *filename)
   original_data = readData(file);
   deleted_data = initParcours();
   GPStoLambertList(); //Conversion des données GPS en Lambert 93
-                      //original_data = readDb(original_data);
-  //readDb();
+
   cleanRedundantPoints();
   parcours *tmp = original_data->next;
   while (tmp->next != NULL)
@@ -316,14 +345,18 @@ void load_Data(char *filename)
     tmp = tmp->next;
   }
   correctInterest();
-  
 
-  img_point_data = LambertToImg();
+  img_point_data = LambertToImg(); //Conversion des points en Lambert en points affichable
   deleted_data = LambertToDelImg();
   animated_data = img_point_data;
   fclose(file);
 }
 
+/*
+ * @brief Appelé lors du click sur "Ouvrir"
+ * Ouvre une fenêtre de dialogue pour séléctionner le fichier a Ouvrir
+ * Lance le chargement de données
+ */
 void choose_File(GtkWidget *item, gpointer data)
 {
   GtkWidget *dialog;
@@ -359,11 +392,12 @@ void choose_File(GtkWidget *item, gpointer data)
   }
 }
 
+/*
+ * @brief Foncion principale lancant la fenêtre principale
+ * Effectue les traitement nécessaire pour mettre en relation les fonctions et la vue
+ */
 int main(int argc, char *argv[])
 {
-  //printf("%d \n", computeDensity( 653046.81, 6665889.14));
-  //readDb(initParcours());
-
   //GtkWidget *window;
   GtkWidget *vbox;
   GtkWidget *grid;
@@ -393,12 +427,6 @@ int main(int argc, char *argv[])
   GtkWidget *quitMi;
   GtkWidget *openMi;
 
-  //Affichage
-  //GtkWidget *pointsDisplayMi;
-  //GtkWidget *routesDisplayMi;
-  //GtkWidget *pointInteretDisplayMi;
-  //GtkWidget *cercleAnonymatDisplayMi;
-
   //Annimations
   GtkWidget *playMi;
   GtkWidget *stopMi;
@@ -413,7 +441,6 @@ int main(int argc, char *argv[])
   gtk_window_set_title(GTK_WINDOW(window), "Geoloc");
 
   vbox = gtk_box_new(FALSE, 0);
-  //gtk_container_add(GTK_CONTAINER(window), vbox);
 
   menubar1 = gtk_menu_bar_new();
   menubar2 = gtk_menu_bar_new();
@@ -475,23 +502,11 @@ int main(int argc, char *argv[])
   //Zone cartograĥique
   /////////////////////////////////////////////////
 
-  //GtkWidget *darea;
   darea = gtk_drawing_area_new();
   gtk_widget_set_size_request(darea, 1200, 743);
 
   grid = gtk_grid_new();
-  //Ajout
-  /*swindow = gtk_scrolled_window_new (NULL,NULL); //De base valeur à modifier
-  viewport = gtk_viewport_new (NULL,NULL); //De base valeur par défaut ce sont les valeurs à modifier
-  //GtkAdjustment *gtk_scrollable_get_hadjustment (GtkScrollable *scrollable);
-  gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(swindow), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-  gtk_grid_attach(GTK_GRID(grid), swindow, 0, 1, 400, 200);
 
-  gtk_container_add (GTK_CONTAINER(viewport), darea);
-  //gtk_container_add (GTK_CONTAINER(swindow), viewport);
-  gtk_container_add (GTK_CONTAINER(swindow), viewport);
-  //gtk_grid_attach (GTK_GRID(grid), swindow, 0, 1, 1, 2);*/
-  //Fin ajout
   gtk_container_add(GTK_CONTAINER(window), grid);
 
   gtk_grid_attach(GTK_GRID(grid), vbox, 0, 0, 1, 1);
@@ -514,8 +529,6 @@ int main(int argc, char *argv[])
   g_signal_connect(G_OBJECT(openMi), "activate",
                    G_CALLBACK(choose_File), NULL);
 
-  //Cocher au demrrage affichage des routes
-  //gtk_check_menu_item_set_active(pointsDisplayMi, 1);
   g_signal_connect(G_OBJECT(pointsDisplayMi), "toggled",
                    G_CALLBACK(pointsDisplayMiEvent), pointsDisplayMi);
 
@@ -536,13 +549,11 @@ int main(int argc, char *argv[])
 
   g_signal_connect(G_OBJECT(playMi), "activate",
                    G_CALLBACK(playMiEvent), playMi);
+
   g_signal_connect(G_OBJECT(stopMi), "activate",
                    G_CALLBACK(stopMiEvent), stopMi);
 
   //Affichage de la fenêtre
-
-  //gtk_window_maximize (GTK_WINDOW (p_window));
-
   gtk_widget_show_all(window);
 
   gtk_main();
