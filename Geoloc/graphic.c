@@ -265,7 +265,8 @@ gboolean setPath(GtkWidget *widget, parcours* lp, int showRoutes){
                         printf("%lf / %lf\n", tmp->pt->longitude, tmp->pt->latitude);
                         setPoint(widget, tmp->pt->longitude, tmp->pt->latitude, 3);
                     }else{
-                        setPoint(widget, tmp->pt->longitude, tmp->pt->latitude, 0);    
+                        setPoint(widget, tmp->pt->longitude, tmp->pt->latitude, 2);
+                        setLabel(widget, (tmp->pt->longitude+10), (tmp->pt->latitude-10), "88 Boulevard Lahitolle");    
                     }
                 }
 

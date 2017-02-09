@@ -423,7 +423,7 @@ int main(int argc, char *argv[]) {
   pointInteretDisplayMi = gtk_check_menu_item_new_with_label("Affichage des points d'interêts");
   deletedPointsDisplayMi = gtk_check_menu_item_new_with_label("Affichage des points supprimés");
 
-  anonymatChoiceMi = gtk_menu_item_new_with_label("Proposition pour une suppression d'un point");
+  anonymatChoiceMi = gtk_menu_item_new_with_label("Proposition pour la suppression d'un point d'interêt");
   anonymatMi = gtk_menu_item_new_with_label("Supprimer un point d'interêt");
 
   gtk_menu_item_set_submenu(GTK_MENU_ITEM(displayMi), displayMenu);
