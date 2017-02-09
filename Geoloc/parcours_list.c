@@ -101,7 +101,8 @@ void cleanRedundantPoints() {
     suiv = listTemp->next;
     printf("%f \n",fabs(listTemp->pt->longitude - suiv->pt->longitude));
     printf("%f\n",fabs(listTemp->pt->latitude - suiv->pt->latitude));
-    if( fabs(listTemp->pt->longitude - suiv->pt->longitude)< 30 && fabs(listTemp->pt->latitude - suiv->pt->latitude) < 30 ) {
+    if( fabs(listTemp->pt->longitude - suiv->pt->longitude)< 30 && fabs(listTemp->pt->latitude - suiv->pt->latitude) < 30 
+    && strcmp(listTemp->pt->adresse,"INTERET")!=0 ) {
       if(previous != NULL) { // First point
         addPoint(listTemp->pt, deleted_data);
         previous->next = suiv;
@@ -138,11 +139,10 @@ void detectInterest(dataPoint * point) {
     // Appelle a la fonction remove Point de jeremy. en passant chacun des points.
     //point->adresse = "INTERET"; // Besoin d'allouer ou deja fait ?
     strcpy(point->adresse, "INTERET");
-
-    printf("SALOPE %s \n" , point->adresse);
+    printf("SALOPE %s %d \n" , point->adresse, strcmp(point->adresse, "INTERET"));
     int i;
     for (i = 0; i<80; i++) {
-      removePoint(toBeDeleted[i],original_data);
+      //removePoint(toBeDeleted[i],original_data);
     }
   }
 }
@@ -307,6 +307,8 @@ parcours * LambertToImg()
       double img_y = (original_data->pt->latitude - one_y) * 743 / limit_y;
 
       img_point = newPoint(original_data->pt->time, img_y, img_x);
+      //strcpy(img_point->adresse,original_data->pt->adresse);
+      img_point->adresse = original_data->pt->adresse;
       addPoint(img_point, list_img_point);
     }
     if(original_data->next) original_data = original_data->next; else break;

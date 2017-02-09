@@ -289,12 +289,15 @@ void load_Data(char * filename)
 	GPStoLambertList(); //Conversion des données GPS en Lambert 93
 	//original_data = readDb(original_data);
   parcours * tmp = original_data->next;
-  /*while( tmp->next !=NULL){
+  cleanRedundantPoints();
+  while( tmp->next !=NULL){
 
     detectInterest(tmp->pt);
+    if(strcmp(tmp->pt->adresse,"INTERET") == 0) {
+      printf("HEY INTERET ICI \n");
+    }
     tmp = tmp->next;
-  }*/
-  cleanRedundantPoints();
+  }
 	img_point_data = LambertToImg();
   deleted_data = LambertToDelImg();
   animated_data = img_point_data;

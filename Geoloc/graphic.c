@@ -253,7 +253,7 @@ gboolean setPath(GtkWidget *widget, parcours* lp, int showRoutes){
 
                 if(tmp->next) setPoint(widget, tmp->next->pt->longitude, tmp->next->pt->latitude, 0); else break;
             }else{
-
+                printf("Dans le champ adresse : %s coucou\n", tmp->pt->adresse);
                 if(strcmp(tmp->pt->adresse,"INTERET") == 0 && filters.displayIPoints){
                     printf("Je suis un interet\n");
                     setPoint(widget, tmp->pt->longitude, tmp->pt->latitude, 2);
