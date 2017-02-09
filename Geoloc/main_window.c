@@ -11,11 +11,11 @@
 #include "graphic.h"
 #include <unistd.h>
 
-parcours * original_data = NULL;
-parcours * img_point_data;
+parcours *original_data = NULL;
+parcours *img_point_data;
 GtkWidget *darea;
 GtkWidget *window;
-parcours * animated_data = NULL;
+parcours *animated_data = NULL;
 parcours *deleted_data = NULL;
 
 dataPoint *deleting_point; //point contenant un point d'interet a supprimer
@@ -36,185 +36,193 @@ GtkWidget *deletedPointsDisplayMi;
 GtkWidget *anonymatChoiceMi;
 GtkWidget *anonymatMi;
 
-
-void pointsDisplayMiEvent (GtkWidget *widget, gpointer *data)
+void pointsDisplayMiEvent(GtkWidget *widget, gpointer *data)
 {
-	int isactive = gtk_check_menu_item_get_active(data);
+  int isactive = gtk_check_menu_item_get_active(data);
   //Si on active l'affichage des points et que des données ont été chargées
-  if(isactive == 1 && original_data != NULL)
+  if (isactive == 1 && original_data != NULL)
     filters.displayPoints = 1;
   //Si on active l'affichage des loints mais que aucune données n'ont été chargées
-  else if(isactive == 1 && original_data == NULL)
+  else if (isactive == 1 && original_data == NULL)
   {
     GtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT;
-    GtkWidget* dialog = gtk_message_dialog_new (window ,
-                                   flags,
-                                   GTK_MESSAGE_INFO,
-                                   GTK_BUTTONS_OK,
-                                   "Impossible d'afficher les points, aucune donnée n'a été chargée");
+    GtkWidget *dialog = gtk_message_dialog_new(window,
+                                               flags,
+                                               GTK_MESSAGE_INFO,
+                                               GTK_BUTTONS_OK,
+                                               "Impossible d'afficher les points, aucune donnée n'a été chargée");
 
-    gtk_dialog_run(GTK_DIALOG (dialog));
+    gtk_dialog_run(GTK_DIALOG(dialog));
     gtk_check_menu_item_set_active(pointsDisplayMi, 0);
     gtk_widget_destroy(dialog);
   }
   //Si on désactive l'affichage des points
-  else {
+  else
+  {
     filters.displayPoints = 0;
-		gtk_check_menu_item_set_active(routesDisplayMi, 0);
+    gtk_check_menu_item_set_active(routesDisplayMi, 0);
     gtk_check_menu_item_set_active(pointInteretDisplayMi, 0);
     gtk_check_menu_item_set_active(deletedPointsDisplayMi, 0);
   }
 
-	gtk_widget_queue_draw(darea);
+  gtk_widget_queue_draw(darea);
 }
 
-void routesDisplayMiEvent (GtkWidget *widget, gpointer *data)
+void routesDisplayMiEvent(GtkWidget *widget, gpointer *data)
 {
   int isactive = gtk_check_menu_item_get_active(data);
   //Si on active l'affichage des routes et que des données ont été chargées
-  if(isactive == 1 && original_data != NULL){
-		//Si on affiche les routes on affiche aussi les points et donc coche la checkbox "affichage des points"
-		filters.displayPoints = 1;
-		gtk_check_menu_item_set_active(pointsDisplayMi, 1);
+  if (isactive == 1 && original_data != NULL)
+  {
+    //Si on affiche les routes on affiche aussi les points et donc coche la checkbox "affichage des points"
+    filters.displayPoints = 1;
+    gtk_check_menu_item_set_active(pointsDisplayMi, 1);
     filters.displayRoutes = 1;
-
   }
   //Si on active l'affichage des routes mais que aucune données n'ont été chargées
-  else if(isactive == 1 && original_data == NULL)
+  else if (isactive == 1 && original_data == NULL)
   {
     GtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT;
-    GtkWidget* dialog = gtk_message_dialog_new (window ,
-                                   flags,
-                                   GTK_MESSAGE_INFO,
-                                   GTK_BUTTONS_OK,
-                                   "Impossible d'afficher les routes, aucune donnée n'a été chargée");
+    GtkWidget *dialog = gtk_message_dialog_new(window,
+                                               flags,
+                                               GTK_MESSAGE_INFO,
+                                               GTK_BUTTONS_OK,
+                                               "Impossible d'afficher les routes, aucune donnée n'a été chargée");
 
-    gtk_dialog_run(GTK_DIALOG (dialog));
+    gtk_dialog_run(GTK_DIALOG(dialog));
     gtk_check_menu_item_set_active(routesDisplayMi, 0);
     gtk_widget_destroy(dialog);
   }
   //Si on désactive l'affichage des routes
-  else {
+  else
+  {
     filters.displayRoutes = 0;
   }
 
   gtk_widget_queue_draw(darea);
 }
 
-void pointInteretDisplayMiEvent (GtkWidget *widget, gpointer *data)
+void pointInteretDisplayMiEvent(GtkWidget *widget, gpointer *data)
 {
   int isactive = gtk_check_menu_item_get_active(data);
   //Si on active l'affichage des routes et que des données ont été chargées
-  if(isactive == 1 && original_data != NULL){
+  if (isactive == 1 && original_data != NULL)
+  {
     //Si on affiche les routes on affiche aussi les points et donc coche la checkbox "affichage des points"
     filters.displayIPoints = 1;
     gtk_check_menu_item_set_active(pointInteretDisplayMi, 1);
     filters.displayIPoints = 1;
-
   }
   //Si on active l'affichage des routes mais que aucune données n'ont été chargées
-  else if(isactive == 1 && original_data == NULL)
+  else if (isactive == 1 && original_data == NULL)
   {
     GtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT;
-    GtkWidget* dialog = gtk_message_dialog_new (window ,
-                                   flags,
-                                   GTK_MESSAGE_INFO,
-                                   GTK_BUTTONS_OK,
-                                   "Impossible d'afficher les points d'interet, aucune donnée n'a été chargée");
+    GtkWidget *dialog = gtk_message_dialog_new(window,
+                                               flags,
+                                               GTK_MESSAGE_INFO,
+                                               GTK_BUTTONS_OK,
+                                               "Impossible d'afficher les points d'interet, aucune donnée n'a été chargée");
 
-    gtk_dialog_run(GTK_DIALOG (dialog));
+    gtk_dialog_run(GTK_DIALOG(dialog));
     gtk_check_menu_item_set_active(pointInteretDisplayMi, 0);
     gtk_widget_destroy(dialog);
   }
   //Si on désactive l'affichage des routes
-  else {
+  else
+  {
     filters.displayIPoints = 0;
   }
 
   gtk_widget_queue_draw(darea);
 }
 
-void deletedPointsDisplayMiEvent (GtkWidget *widget, gpointer *data)
+void deletedPointsDisplayMiEvent(GtkWidget *widget, gpointer *data)
 {
   int isactive = gtk_check_menu_item_get_active(data);
   //Si on active l'affichage des routes et que des données ont été chargées
-  if(isactive == 1 && original_data != NULL){
+  if (isactive == 1 && original_data != NULL)
+  {
     //Si on affiche les routes on affiche aussi les points et donc coche la checkbox "affichage des points"
     filters.displayDeletedPoints = 1;
     gtk_check_menu_item_set_active(deletedPointsDisplayMi, 1);
     filters.displayDeletedPoints = 1;
-
   }
   //Si on active l'affichage des routes mais que aucune données n'ont été chargées
-  else if(isactive == 1 && original_data == NULL)
+  else if (isactive == 1 && original_data == NULL)
   {
     GtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT;
-    GtkWidget* dialog = gtk_message_dialog_new (window ,
-                                   flags,
-                                   GTK_MESSAGE_INFO,
-                                   GTK_BUTTONS_OK,
-                                   "Impossible d'afficher les cercles, aucune donnée n'a été chargée");
+    GtkWidget *dialog = gtk_message_dialog_new(window,
+                                               flags,
+                                               GTK_MESSAGE_INFO,
+                                               GTK_BUTTONS_OK,
+                                               "Impossible d'afficher les cercles, aucune donnée n'a été chargée");
 
-    gtk_dialog_run(GTK_DIALOG (dialog));
+    gtk_dialog_run(GTK_DIALOG(dialog));
     gtk_check_menu_item_set_active(deletedPointsDisplayMi, 0);
     gtk_widget_destroy(dialog);
   }
   //Si on désactive l'affichage des routes
-  else {
+  else
+  {
     filters.displayDeletedPoints = 0;
   }
 
   gtk_widget_queue_draw(darea);
 }
 
-void anonymatChoiceMiEvent (GtkWidget *widget, gpointer *data)
+void anonymatChoiceMiEvent(GtkWidget *widget, gpointer *data)
 {
-  if (filters.editionMode != 1){
+  if (filters.editionMode != 1)
+  {
     GtkResponseType result;
     GtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT;
-    GtkWidget* dialog = gtk_message_dialog_new (window ,
-                                 flags,
-                                 GTK_MESSAGE_QUESTION,
-                                 GTK_BUTTONS_YES_NO,
-                                 "Le mode edition a été activé, un cercle d'anonymisation a été mis sur le point a supprimer pour le supprimer choisir 'Supprimer un point d'interêt' dans le menu.");
+    GtkWidget *dialog = gtk_message_dialog_new(window,
+                                               flags,
+                                               GTK_MESSAGE_QUESTION,
+                                               GTK_BUTTONS_YES_NO,
+                                               "Le mode edition a été activé, un cercle d'anonymisation a été mis sur le point a supprimer pour le supprimer choisir 'Supprimer un point d'interêt' dans le menu.");
 
-  result = gtk_dialog_run(GTK_DIALOG (dialog));
+    result = gtk_dialog_run(GTK_DIALOG(dialog));
 
-  gtk_widget_destroy(dialog);
+    gtk_widget_destroy(dialog);
 
     filters.editionMode = 1;
     filters.displayRoutes = 0;
     gtk_check_menu_item_set_active(routesDisplayMi, 0);
     gtk_check_menu_item_set_active(deletedPointsDisplayMi, 0);
-
-  }else{
+  }
+  else
+  {
     printf("Tu es déjà en mode edition\n");
   }
 }
 
-void anonymatMiEvent (GtkWidget *widget, gpointer *data)
+void anonymatMiEvent(GtkWidget *widget, gpointer *data)
 {
   GtkResponseType result;
   GtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT;
-  GtkWidget* dialog = gtk_message_dialog_new (window ,
-                                 flags,
-                                 GTK_MESSAGE_QUESTION,
-                                 GTK_BUTTONS_YES_NO,
-                                 "Le point a supprimer a été encerclé, voulez-vous le supprimer ?");
+  GtkWidget *dialog = gtk_message_dialog_new(window,
+                                             flags,
+                                             GTK_MESSAGE_QUESTION,
+                                             GTK_BUTTONS_YES_NO,
+                                             "Le point a supprimer a été encerclé, voulez-vous le supprimer ?");
 
-  result = gtk_dialog_run(GTK_DIALOG (dialog));
+  result = gtk_dialog_run(GTK_DIALOG(dialog));
 
   gtk_widget_destroy(dialog);
-  if(result == GTK_RESPONSE_YES)
+  if (result == GTK_RESPONSE_YES)
   {
     //Recuperer le pt encerclé et le suppr de img_data pour le mettre dans deleted_data
     printf("Salut j'ai bien suppr ton pt\n");
-    if (filters.editionMode == 1 && deleting_point != NULL){
+    if (filters.editionMode == 1 && deleting_point != NULL)
+    {
       removePoint(deleting_point, img_point_data);
       addPoint(deleting_point, deleted_data);
       filters.editionMode = 0;
       deleting_point = NULL;
-    }else{
+    }
+    else
+    {
       printf("Action impossible : sorti du mode edition\n");
       filters.editionMode = 0;
       deleting_point = NULL;
@@ -222,28 +230,32 @@ void anonymatMiEvent (GtkWidget *widget, gpointer *data)
   }
 }
 
-void playMiEvent (GtkWidget *widget, gpointer *data)
+void playMiEvent(GtkWidget *widget, gpointer *data)
 {
   gtk_widget_queue_draw(widget);
   filters.displayPoints = 0;
   gtk_check_menu_item_set_active(pointsDisplayMi, 0);
   printf("testseg\n");
-    if(!animated_data->next || filters.stopAnimation == 1){
-      printf("Tu as deja fait une animation\n");
-      animated_data = img_point_data;
-      filters.stopAnimation = 0;
-    }
-    printf("testseg\n");
-    g_timeout_add(100, G_CALLBACK(animatePath), NULL);
+  if (!animated_data->next || filters.stopAnimation == 1)
+  {
+    printf("Tu as deja fait une animation\n");
+    animated_data = img_point_data;
+    filters.stopAnimation = 0;
+  }
+  printf("testseg\n");
+  g_timeout_add(100, G_CALLBACK(animatePath), NULL);
 
   gtk_widget_queue_draw(darea);
 }
 
-void stopMiEvent (GtkWidget *widget, gpointer *data)
+void stopMiEvent(GtkWidget *widget, gpointer *data)
 {
-  if(filters.stopAnimation == 1){
+  if (filters.stopAnimation == 1)
+  {
     printf("deja envoye");
-  }else{
+  }
+  else
+  {
     filters.stopAnimation = 1;
   }
 
@@ -254,51 +266,52 @@ void on_data_loaded()
 {
   GtkResponseType result;
   GtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT;
-  GtkWidget* dialog = gtk_message_dialog_new (window ,
-                                 flags,
-                                 GTK_MESSAGE_QUESTION,
-                                 GTK_BUTTONS_YES_NO,
-                                 "Les données ont été chargées, voulez-vous afficher les points ?");
+  GtkWidget *dialog = gtk_message_dialog_new(window,
+                                             flags,
+                                             GTK_MESSAGE_QUESTION,
+                                             GTK_BUTTONS_YES_NO,
+                                             "Les données ont été chargées, voulez-vous afficher les points ?");
 
-  result = gtk_dialog_run(GTK_DIALOG (dialog));
+  result = gtk_dialog_run(GTK_DIALOG(dialog));
 
   gtk_widget_destroy(dialog);
-  if(result == GTK_RESPONSE_YES)
+  if (result == GTK_RESPONSE_YES)
   {
     filters.displayPoints = 1;
     gtk_check_menu_item_set_active(pointsDisplayMi, 1);
   }
-  else if(result == GTK_RESPONSE_NO)
+  else if (result == GTK_RESPONSE_NO)
   {
     filters.displayPoints = 0;
   }
 }
 
-void load_Data(char * filename)
+void load_Data(char *filename)
 {
 
-  FILE* file;
+  FILE *file;
   file = fopen(filename, "r");
-  if(file == NULL)
+  if (file == NULL)
   {
-     perror("Fail open data");
-     exit(EXIT_FAILURE);
+    perror("Fail open data");
+    exit(EXIT_FAILURE);
   }
   original_data = readData(file);
   deleted_data = initParcours();
-	GPStoLambertList(); //Conversion des données GPS en Lambert 93
-	//original_data = readDb(original_data);
+  GPStoLambertList(); //Conversion des données GPS en Lambert 93
+                      //original_data = readDb(original_data);
   //readDb();
   cleanRedundantPoints();
-  parcours * tmp = original_data->next;
-  while( tmp->next != NULL){
+  parcours *tmp = original_data->next;
+  while (tmp->next != NULL)
+  {
 
     detectInterest(tmp->pt);
     tmp = tmp->next;
   }
   correctInterest();
- 
-	img_point_data = LambertToImg();
+
+  img_point_data = LambertToImg();
   deleted_data = LambertToDelImg();
   animated_data = img_point_data;
   fclose(file);
@@ -312,35 +325,35 @@ void choose_File(GtkWidget *item, gpointer data)
 
   char *filename;
 
-  dialog = gtk_file_chooser_dialog_new ("Open File",
-                                      NULL,
-                                      action,
-                                      ("_Cancel"),
-                                      GTK_RESPONSE_CANCEL,
-                                      ("_Open"),
-                                      GTK_RESPONSE_ACCEPT,
-                                      NULL);
+  dialog = gtk_file_chooser_dialog_new("Open File",
+                                       NULL,
+                                       action,
+                                       ("_Cancel"),
+                                       GTK_RESPONSE_CANCEL,
+                                       ("_Open"),
+                                       GTK_RESPONSE_ACCEPT,
+                                       NULL);
 
-  res = gtk_dialog_run (GTK_DIALOG (dialog));
+  res = gtk_dialog_run(GTK_DIALOG(dialog));
 
   if (res == GTK_RESPONSE_ACCEPT)
   {
 
-    GtkFileChooser *chooser = GTK_FILE_CHOOSER (dialog);
-    filename = gtk_file_chooser_get_filename (chooser);
+    GtkFileChooser *chooser = GTK_FILE_CHOOSER(dialog);
+    filename = gtk_file_chooser_get_filename(chooser);
 
     load_Data(filename);
-    g_free (filename);
+    g_free(filename);
   }
-	gtk_widget_destroy (dialog);
-	if (res == GTK_RESPONSE_ACCEPT)
-	{
-		on_data_loaded();
-	}
+  gtk_widget_destroy(dialog);
+  if (res == GTK_RESPONSE_ACCEPT)
+  {
+    on_data_loaded();
+  }
 }
 
-
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
   //printf("%d \n", computeDensity( 653046.81, 6665889.14));
   //readDb(initParcours());
 
@@ -354,7 +367,6 @@ int main(int argc, char *argv[]) {
   GtkWidget *menubar1;
   GtkWidget *menubar2;
   GtkWidget *menubar3;
-
 
   //Menu niveau 1
   //Fichier
@@ -384,7 +396,6 @@ int main(int argc, char *argv[]) {
   GtkWidget *playMi;
   GtkWidget *stopMi;
 
-
   glob.count = 0;
 
   gtk_init(&argc, &argv);
@@ -393,7 +404,6 @@ int main(int argc, char *argv[]) {
   gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
   gtk_window_set_default_size(GTK_WINDOW(window), 500, 500);
   gtk_window_set_title(GTK_WINDOW(window), "Geoloc");
-
 
   vbox = gtk_box_new(FALSE, 0);
   //gtk_container_add(GTK_CONTAINER(window), vbox);
@@ -458,11 +468,9 @@ int main(int argc, char *argv[]) {
   //Zone cartograĥique
   /////////////////////////////////////////////////
 
-
   //GtkWidget *darea;
   darea = gtk_drawing_area_new();
-  gtk_widget_set_size_request (darea, 1200, 743);
-
+  gtk_widget_set_size_request(darea, 1200, 743);
 
   grid = gtk_grid_new();
   //Ajout
@@ -479,58 +487,54 @@ int main(int argc, char *argv[]) {
   //Fin ajout
   gtk_container_add(GTK_CONTAINER(window), grid);
 
-
-  gtk_grid_attach (GTK_GRID (grid), vbox, 0, 0, 1, 1);
-  gtk_grid_attach (GTK_GRID (grid), darea, 0, 1, 1, 1);
+  gtk_grid_attach(GTK_GRID(grid), vbox, 0, 0, 1, 1);
+  gtk_grid_attach(GTK_GRID(grid), darea, 0, 1, 1, 1);
 
   gtk_widget_add_events(window, GDK_BUTTON_PRESS_MASK);
 
   g_signal_connect(G_OBJECT(darea), "draw", G_CALLBACK(on_draw_event), NULL);
   g_signal_connect(window, "button-press-event", G_CALLBACK(clicked), original_data);
 
- //////////////////////////////////////////////////
+  //////////////////////////////////////////////////
 
   //Linkage des fonctions
   g_signal_connect(G_OBJECT(window), "destroy",
-        G_CALLBACK(gtk_main_quit), NULL);
+                   G_CALLBACK(gtk_main_quit), NULL);
 
   g_signal_connect(G_OBJECT(quitMi), "activate",
-        G_CALLBACK(gtk_main_quit), NULL);
+                   G_CALLBACK(gtk_main_quit), NULL);
 
   g_signal_connect(G_OBJECT(openMi), "activate",
-        G_CALLBACK(choose_File), NULL);
+                   G_CALLBACK(choose_File), NULL);
 
   //Cocher au demrrage affichage des routes
   //gtk_check_menu_item_set_active(pointsDisplayMi, 1);
-  g_signal_connect (G_OBJECT (pointsDisplayMi), "toggled",
-      	G_CALLBACK (pointsDisplayMiEvent), pointsDisplayMi);
+  g_signal_connect(G_OBJECT(pointsDisplayMi), "toggled",
+                   G_CALLBACK(pointsDisplayMiEvent), pointsDisplayMi);
 
-  g_signal_connect (G_OBJECT (routesDisplayMi), "toggled",
-        G_CALLBACK (routesDisplayMiEvent), routesDisplayMi);
+  g_signal_connect(G_OBJECT(routesDisplayMi), "toggled",
+                   G_CALLBACK(routesDisplayMiEvent), routesDisplayMi);
 
-  g_signal_connect (G_OBJECT (pointInteretDisplayMi), "toggled",
-        G_CALLBACK (pointInteretDisplayMiEvent), pointInteretDisplayMi);
+  g_signal_connect(G_OBJECT(pointInteretDisplayMi), "toggled",
+                   G_CALLBACK(pointInteretDisplayMiEvent), pointInteretDisplayMi);
 
-  g_signal_connect (G_OBJECT (deletedPointsDisplayMi), "toggled",
-        G_CALLBACK (deletedPointsDisplayMiEvent), deletedPointsDisplayMi);
+  g_signal_connect(G_OBJECT(deletedPointsDisplayMi), "toggled",
+                   G_CALLBACK(deletedPointsDisplayMiEvent), deletedPointsDisplayMi);
 
-  g_signal_connect (G_OBJECT (anonymatChoiceMi), "activate",
-        G_CALLBACK (anonymatChoiceMiEvent), anonymatChoiceMi);
+  g_signal_connect(G_OBJECT(anonymatChoiceMi), "activate",
+                   G_CALLBACK(anonymatChoiceMiEvent), anonymatChoiceMi);
 
-  g_signal_connect (G_OBJECT (anonymatMi), "activate",
-        G_CALLBACK (anonymatMiEvent), anonymatMi);
+  g_signal_connect(G_OBJECT(anonymatMi), "activate",
+                   G_CALLBACK(anonymatMiEvent), anonymatMi);
 
-  g_signal_connect (G_OBJECT (playMi), "activate",
-        G_CALLBACK (playMiEvent), playMi);
-  g_signal_connect (G_OBJECT (stopMi), "activate",
-        G_CALLBACK (stopMiEvent), stopMi);
-
-
-
+  g_signal_connect(G_OBJECT(playMi), "activate",
+                   G_CALLBACK(playMiEvent), playMi);
+  g_signal_connect(G_OBJECT(stopMi), "activate",
+                   G_CALLBACK(stopMiEvent), stopMi);
 
   //Affichage de la fenêtre
 
-//gtk_window_maximize (GTK_WINDOW (p_window));
+  //gtk_window_maximize (GTK_WINDOW (p_window));
 
   gtk_widget_show_all(window);
 

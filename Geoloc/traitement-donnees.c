@@ -29,10 +29,9 @@ void GPStoLambert(float latitude, float longitude)
   float x = floor(Xs + C * exp(-N * latitude_iso) * sin(N * (M_PI / 180) * (longitude - LAMBDAC)));
   float y = floor(Ys - C * exp(-N * latitude_iso) * cos(N * (M_PI / 180) * (longitude - LAMBDAC)));
 
-  // Correction des coordonnées
+  // Correction des coordonnée
   x += 3;
   y += 349;
-
 }
 
 /**
