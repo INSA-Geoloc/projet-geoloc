@@ -1,3 +1,5 @@
+.vscode/
+
 # Xcode project
 # *.xcodeproj
 *.DS_Store
