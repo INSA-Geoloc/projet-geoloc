@@ -7,10 +7,6 @@ DEBUGFLAGS = -c -g -O3 -Wall
 
 GTKFLAGS = `pkg-config --cflags --libs gtk+-3.0` `pkg-config --cflags cairo`
 
-
-main: main.o graphic.o parcours_list.o data.o traitement-donnees.o
-	$(CC) main.o graphic.o parcours_list.o data.o traitement-donnees.o -o main -lm $(GTKFLAGS)
-
 mainwindow: main_window.o graphic.o parcours_list.o data.o traitement-donnees.o
 	$(CC) main_window.o graphic.o parcours_list.o data.o traitement-donnees.o -o mainwindow -lm $(GTKFLAGS)
 
@@ -31,9 +27,6 @@ data.o: data.c data.h parcours_list.h
 
 traitement-donnees.o: traitement-donnees.c traitement-donnees.h parcours_list.h data.h
 	$(CC) $(DATAFLAGS) traitement-donnees.c -lm
-
-main.o: main.c
-	$(CC) $(DATAFLAGS) main.c $(GTKFLAGS) -lm
 
 clean:
 	rm -rf main mainwindow *.o
