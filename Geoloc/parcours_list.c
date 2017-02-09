@@ -395,6 +395,7 @@ parcours * LambertToDelImg()
       double img_y = (deleted_data->pt->latitude - one_y) * 743 / limit_y;
 
       img_point = newPoint(deleted_data->pt->time, img_y, img_x);
+      //strcpy(img_point->adresse, deleted_data->pt->adresse);
       addPoint(img_point, list_img_point);
     }
     if(deleted_data->next) deleted_data = deleted_data->next; else break;
