@@ -271,7 +271,7 @@ gboolean setPath(GtkWidget *widget, parcours* lp, int showRoutes){
                     }
                 }
 
-                if(filters.editionMode == 1 /*&& strcmp(tmp->pt->adresse,"INTERET") == 0 && deleting_point == NULL*/){
+                if(filters.editionMode == 1 && strcmp(tmp->pt->adresse,"INTERET") == 0/* && deleting_point == NULL*/){
                     printf("Il y a des choses à faire\n");
                     if(deleting_point == NULL){
                         setCircle(widget, tmp->pt->longitude, tmp->pt->latitude, 20);

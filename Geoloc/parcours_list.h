@@ -32,7 +32,8 @@ extern parcours * LambertToImg();
 
 extern parcours * LambertToDelImg();
 
-extern void readDb();
+char* getfield(char * line, int num);
+void readDb();
 int computeDensity(double pointLat, double pointLong);
 void cleanRedundantPoints();
 void detectInterest(dataPoint * point);
