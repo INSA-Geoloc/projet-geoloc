@@ -49,8 +49,8 @@ char *getfield(char *line, int num)
 
 /*
 * @brief Algorithme de lecture de la base IGN, 
-* Cherche si des points de la lise correspondent � ceux de la base IGN pou remplir leur champ adresse.�e
-*/ /
+* Cherche si des points de la lise correspondent a ceux de la base IGN pou remplir leur champ adresse.�e
+*/
     void readDb()
 {
   parcours *tmp = original_data->next;
@@ -102,8 +102,7 @@ char *getfield(char *line, int num)
 * @brief Calcul le nombre d'habitation dans la base IGN à proximité des coords donné
 * @param pointLat Latitude pour la quelle chercher dans la base IGN
 * @param pointLong longitude pour la quelle chercher dans la base IGN
-* @return densit� correspondante dans la base IGN.�s.
-
+* @return densite correspondante dans la base IGN.�s.
 */
 int computeDensity(double pointLat, double pointLong)
 {
@@ -156,11 +155,12 @@ void cleanRedundantPoints()
     }
     listTemp = suiv;
   }
+}
 
 /*
 * @brief Fonction de correction des points d'interets.
 * Fusionne les points d'interets s'ils se trouvent trop proche.
-*/}
+*/
 
 void correctInterest()
 {
@@ -182,11 +182,11 @@ void correctInterest()
     }
     tmp = tmp->next;
   }
-
+}
 /*
 * @brief Algorithme de detection des points d'interets
 * @param point le point pour lequel chercher s'il doit �tre consid�r� comme un point d'interet���'
-*/}
+*/
 
 void detectInterest(dataPoint *point)
 {
@@ -259,13 +259,14 @@ void addPoint(dataPoint *ptd, parcours *p)
     p->next->pt = ptd;
     p->next->next = NULL;
   }
+}
 
 /**
 * @brief fonction de suppression d'un point dans une liste.
 * Recherche le point en parametre et le supprime de la liste.
-* @param ptd pointeur sur le point � supprimer
-* @param p pointeur sur la liste dans laquelle le point doit �tre supprimer���
-*/}
+* @param ptd pointeur sur le point a supprimer
+* @param p pointeur sur la liste dans laquelle le point doit etre supprimer���
+*/
 
 int removePoint(dataPoint *ptd, parcours *p)
 {
@@ -371,11 +372,12 @@ void GPStoLambertList()
       break;
   }
   original_data = tmp;
+}
 
 /**
-* @brief Crée une liste de points, avec des coordonnéemise � l'�chelle de la carte.
-* @return une nouvelle liste � l'�chelle de la carte.'�'�s'a�s�
-*/}
+* @brief Crée une liste de points, avec des coordonnéemise a l'echelle de la carte.
+* @return une nouvelle liste a l'echelle de la carte.'�'�s'a�s�
+*/
 
 parcours *LambertToImg()
 {

@@ -10,11 +10,17 @@ struct {
 } glob;
 
 typedef struct {
+	/*! Affichage de points*/
 	int displayPoints;
+	/*! Affichage de routes*/
 	int displayRoutes;
+	/*! Affichage de points d'interet*/
 	int displayIPoints;
+	/*! Affichage de points supprimes*/
 	int displayDeletedPoints;
+	/*! Mode pour la suppression de points*/
 	int editionMode;
+	/*! Element de confirmation pour l'arret de l'animation*/
 	int stopAnimation;
 }menuFilters;
 
@@ -32,7 +38,5 @@ gboolean setCircle(GtkWidget *widget, double xc, double yc, double taille);
 gboolean setLabel(GtkWidget *widget, double xl, double yl, char* text);
 
 gboolean clicked(GtkWidget *widget, GdkEventButton *event, gpointer user_data);
-
-void adaptLocation(double longitude, double latitude);
 
 #endif
