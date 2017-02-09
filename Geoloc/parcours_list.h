@@ -36,5 +36,5 @@ extern void readDb();
 int computeDensity(double pointLat, double pointLong);
 void cleanRedundantPoints();
 void detectInterest(dataPoint * point);
-
+void correctInterest();
 #endif

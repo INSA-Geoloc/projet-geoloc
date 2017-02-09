@@ -6,7 +6,7 @@
 #include "data.h"
 #include "parcours_list.h"
 
-#define INTEREST_RATE 15
+#define INTEREST_RATE 20
 
 extern parcours * original_data;
 extern parcours * deleted_data;
@@ -111,6 +111,23 @@ void cleanRedundantPoints() {
       previous = listTemp;
     }
     listTemp = suiv;
+  }
+}
+
+void correctInterest() {
+  parcours * tmp = original_data->next;
+  parcours * tmp2 ;
+  while (tmp->next != NULL){
+    if(strcmp(tmp->pt->adresse,"INTERET") == 0) {
+      tmp2 = tmp->next;
+      while (tmp2->next != NULL) {
+        if(strcmp(tmp->pt->adresse,"INTERET") == 0 && fabs(tmp->pt->latitude - tmp2->pt->latitude ) < 30 && fabs(tmp->pt->longitude - tmp2->pt->longitude ) < 30){
+          removePoint(tmp2->pt,original_data);
+        }
+        tmp2 = tmp2->next;
+      }
+    }
+    tmp = tmp->next;
   }
 }
 

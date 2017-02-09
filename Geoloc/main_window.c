@@ -293,11 +293,9 @@ void load_Data(char * filename)
   while( tmp->next !=NULL){
 
     detectInterest(tmp->pt);
-    if(strcmp(tmp->pt->adresse,"INTERET") == 0) {
-      printf("HEY INTERET ICI \n");
-    }
     tmp = tmp->next;
   }
+  correctInterest();
 	img_point_data = LambertToImg();
   deleted_data = LambertToDelImg();
   animated_data = img_point_data;
