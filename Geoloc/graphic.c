@@ -26,6 +26,12 @@ gboolean on_draw_event(GtkWidget *widget, cairo_t *cr, gpointer user_data)
 
     return FALSE;
 }
+
+
+/**
+ * @brief Fonction d'affichage de point pour la visualitation dynamique
+ */
+
 gboolean animatePath(){
     cairo_t *cr;
     cr = gdk_cairo_create(gtk_widget_get_window(darea));
@@ -34,13 +40,10 @@ gboolean animatePath(){
         return FALSE; //On stoppe l'animation
     }
 
-    printf("Je suis appele\n");
     if(!animated_data){
-        printf("test : erreur animated_data\n");
+        printf("Erreur animated_data\n");
     }else{
         if(animated_data->pt){ //Point dans le parcours
-            printf("Sans user_data pt\n");
-            printf("test : %lf\n", animated_data->pt->longitude);
 
             if(animated_point != NULL){
                 cairo_move_to(cr, animated_point->longitude, animated_point->latitude);
@@ -52,16 +55,12 @@ gboolean animatePath(){
             setPoint(darea, animated_data->pt->longitude, animated_data->pt->latitude, 0);
             animated_point = animated_data->pt; //Sauvegarde du point pour les tracés
         }else { //1er point du parcours
-            printf("Sans user_data pt next\n");
-            printf("test : %lf\n", animated_data->next->pt->longitude);
             setPoint(darea, animated_data->next->pt->longitude, animated_data->next->pt->latitude, 0);
             animated_point = animated_data->next->pt;
         }
     }
 
     if(animated_data->next){
-        printf("next ok \n");
-        printf("test : %lf\n", animated_data->next->pt->longitude);
         animated_data = animated_data->next;
     }else{
         printf("Fin animation\n");
@@ -101,14 +100,22 @@ void do_drawing(cairo_t *cr)
     glob.count = 0;
     if(original_data != NULL && original_data->next != NULL && filters.displayPoints == 1)
     {
-    	setPath(darea, img_point_data, filters.displayRoutes);
+    	setPath(darea, img_point_data, filters.displayRoutes); //Affichage de notre parcours
     }
     if(original_data != NULL && deleted_data->next != NULL && filters.displayPoints == 1 && filters.displayDeletedPoints)
     {
-        setPath(darea, deleted_data, 3);
+        setPath(darea, deleted_data, 3); //Affichage des points supprimes
     }
     cairo_stroke(cr);
 }
+
+/**
+ * @brief Creation d'un point sur la carte
+ * @param widget conteneur pour le dessin
+ * @param xp position en x ou placer le point
+ * @param yp position en y ou placer le point
+ * @param pointType type de point a afficher
+ */
 
 gboolean setPoint(GtkWidget *widget, double xp, double yp, int pointType){
     cairo_t *cr;
@@ -150,6 +157,15 @@ gboolean setPoint(GtkWidget *widget, double xp, double yp, int pointType){
     return TRUE;
 }
 
+
+/**
+ * @brief Creation d'un cercle sur la carte
+ * @param widget conteneur pour le dessin
+ * @param xc position en x ou placer le cercle
+ * @param yc position en y ou placer le cercle
+ * @param taille le rayon du cercle a afficher
+ */
+
 gboolean setCircle(GtkWidget *widget, double xc, double yc, double taille){
     cairo_t *cr;
 
@@ -177,6 +193,15 @@ gboolean setCircle(GtkWidget *widget, double xc, double yc, double taille){
     return TRUE;
 }
 
+
+/**
+ * @brief Creation d'un texte sur la carte
+ * @param widget conteneur pour le dessin
+ * @param xl position en x ou placer le texte
+ * @param yl position en y ou placer le texte
+ * @param text le texte a ecrire
+ */
+
 gboolean setLabel(GtkWidget *widget, double xl, double yl, char* text){
 
     cairo_t *cr;
@@ -201,7 +226,15 @@ gboolean setLabel(GtkWidget *widget, double xl, double yl, char* text){
     cairo_move_to (cr, (xl+10), (yl-10));
     cairo_show_text (cr, utf8);
 }
-int isDone = 0;
+
+
+/**
+ * @brief Affichage d'un parcours complet de points
+ * @param widget conteneur pour le dessin
+ * @param lp parcours contenant tous les points a afficher
+ * @param showRoutes filtre servant pour afficher different nos points
+ */
+
 gboolean setPath(GtkWidget *widget, parcours* lp, int showRoutes){
 		parcours * tmp = lp->next;
 
@@ -214,13 +247,6 @@ gboolean setPath(GtkWidget *widget, parcours* lp, int showRoutes){
 
     	cr = gdk_cairo_create(gtk_widget_get_window(widget));
   		while(tmp->pt != NULL){
-
-            if(tmp->pt->time == 1477056415 && isDone != 1 && !filters.displayDeletedPoints){
-                printf("J'en ai trouve un\n");
-                addPoint(tmp->pt, deleted_data);
-                isDone = 1;
-                removePoint(tmp->pt, img_point_data);
-            }
 
             if(showRoutes == 1){
                 setPoint(widget, tmp->pt->longitude, tmp->pt->latitude, 0);
@@ -298,15 +324,4 @@ gboolean clicked(GtkWidget *widget, GdkEventButton *event, gpointer user_data)
 
 
     return TRUE;
-}
-
-void adaptLocation(double xL, double latitude){
-    double x, y, bx, by;
-    double r  = 6371000;
-    double cx = 0;
-    double cy = 0;
-
-    x = r*sin(latitude)*cos(xL);
-    y = r*sin(latitude)*sin(latitude);
-    printf("X : %lf | Y : %lf \n", x, y);
 }

@@ -170,6 +170,10 @@ void deletedPointsDisplayMiEvent(GtkWidget *widget, gpointer *data)
   gtk_widget_queue_draw(darea);
 }
 
+/**
+ * @brief Fonction d'activation du mode edition avec proposition de points d'interet
+ */
+
 void anonymatChoiceMiEvent(GtkWidget *widget, gpointer *data)
 {
   if (filters.editionMode != 1)
@@ -197,6 +201,10 @@ void anonymatChoiceMiEvent(GtkWidget *widget, gpointer *data)
   }
 }
 
+/**
+ * @brief Fonction de suppression de points d'interet selectionnes
+ */
+
 void anonymatMiEvent(GtkWidget *widget, gpointer *data)
 {
   GtkResponseType result;
@@ -212,7 +220,7 @@ void anonymatMiEvent(GtkWidget *widget, gpointer *data)
   gtk_widget_destroy(dialog);
   if (result == GTK_RESPONSE_YES)
   {
-    //Recuperer le pt encerclé et le suppr de img_data pour le mettre dans deleted_data
+    //Recuperer le point encerclé et le supprimer de img_data pour le mettre dans deleted_data
     printf("Salut j'ai bien suppr ton pt\n");
     if (filters.editionMode == 1 && deleting_point != NULL)
     {
@@ -235,15 +243,13 @@ void playMiEvent(GtkWidget *widget, gpointer *data)
   gtk_widget_queue_draw(widget);
   filters.displayPoints = 0;
   gtk_check_menu_item_set_active(pointsDisplayMi, 0);
-  printf("testseg\n");
   if (!animated_data->next || filters.stopAnimation == 1)
   {
     printf("Tu as deja fait une animation\n");
     animated_data = img_point_data;
     filters.stopAnimation = 0;
   }
-  printf("testseg\n");
-  g_timeout_add(100, G_CALLBACK(animatePath), NULL);
+  g_timeout_add(100, G_CALLBACK(animatePath), NULL); //Fonction appelante a intervalle reguliers
 
   gtk_widget_queue_draw(darea);
 }
@@ -310,6 +316,7 @@ void load_Data(char *filename)
     tmp = tmp->next;
   }
   correctInterest();
+  
 
   img_point_data = LambertToImg();
   deleted_data = LambertToDelImg();

@@ -242,7 +242,6 @@ void addPoint(dataPoint * ptd, parcours * p){
    }
 }
 
-
 /**
 * @brief fonction de suppression d'un point dans une liste.
 * Recherche le point en parametre et le supprime de la liste.
@@ -338,7 +337,6 @@ void GPStoLambertList()
   }
   original_data = tmp;
 }
-
 
 /**
 * @brief Crée une liste de points, avec des coordonnées mise à l'échelle de la carte.
