@@ -32,16 +32,35 @@ parcours* readData(FILE * p){
    return lp;
 }
 
+/*
+* Fonction utilisé uniquement dans la fonction readDb pour lire le fichier CSV
+*
+*/
+char* getfield(char * line, int num)
+{
+  char * tok;
+  for( tok = strtok(line, ","); tok && *tok; tok = strtok(NULL, ",\n"))
+  {
+    if(!--num)
+      return tok;
+  }
+  return NULL;
+}
 
 
 /*
 * A appeler avant de mettre les points à l'echelle
 * @param list liste de points avec coord en Lambert
 */
-void readDb() 
+/*
+* A appeler avant de mettre les points à l'echelle
+* @param list liste de points avec coord en Lambert
+*/
+void readDb()
 {
-  parcours * tmp = original_data;
+  parcours * tmp = original_data->next;
   FILE * f = fopen("IGN.csv","r");
+  char buffer[1024], *tmpbuf;
   double lat, lon;
   char * adresse = (char*) malloc(60);
 
@@ -52,21 +71,37 @@ void readDb()
   else
   {
     while( tmp->next != NULL) {
-      //strtok
-      while(fscanf(f, "%s,%lf,%lf\n", adresse, &lat, &lon) == 3) {
+      while(fgets(buffer, 1024, f))
+      {
+        //rempli la latitude
+        tmpbuf = strdup(buffer);
+        sscanf(getfield(tmpbuf, 1), "%lf", &lon);
+
+        //rempli la longitude
+        tmpbuf = strdup(buffer);
+        sscanf(getfield(tmpbuf, 2), "%lf", &lat);
+
+        //rempli l'adresse
+        tmpbuf = strdup(buffer);
+        adresse = getfield(tmpbuf, 3);
+        //while(fscanf(f, "%lf;%lf;%[^;]\n", &lat, &lon, adresse) == 3) {
         printf("Adresse : %s \n", adresse);
+        printf("%lf %lf\n",lon , tmp->pt->longitude);
+        printf("%lf  %lf\n ",lat ,tmp->pt->latitude);
+
         if ( fabs(tmp->pt->latitude - lat)< 2 && fabs(tmp->pt->longitude - lon) < 2){
+          printf("Je suis dans readDb\n" );
           //tmp->pt->adresse = (char*)malloc(strlen(adresse));
-          strcpy(tmp->pt->adresse,adresse); // faire malloc ? 
+          strcpy(tmp->pt->adresse,adresse); // faire malloc ?
           break;
         }
       }
       tmp = tmp->next;
     }
-    fclose(f);
   }
-
+  fclose(f);
 }
+
 
 
 /*

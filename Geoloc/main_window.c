@@ -288,6 +288,7 @@ void load_Data(char * filename)
   deleted_data = initParcours();
 	GPStoLambertList(); //Conversion des données GPS en Lambert 93
 	//original_data = readDb(original_data);
+  //readDb();
   cleanRedundantPoints();
   parcours * tmp = original_data->next;
   while( tmp->next != NULL){
@@ -296,6 +297,7 @@ void load_Data(char * filename)
     tmp = tmp->next;
   }
   correctInterest();
+ 
 	img_point_data = LambertToImg();
   deleted_data = LambertToDelImg();
   animated_data = img_point_data;
