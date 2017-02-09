@@ -23,19 +23,17 @@ extern int removePoint(dataPoint * ptd, parcours * p);
 
 //Affichage de la liste
 extern void displayList(parcours * p);
-
 extern void destroyList(parcours * l);
-
 extern void GPStoLambertList();
-
 extern parcours * LambertToImg();
-
 extern parcours * LambertToDelImg();
+
+void cleanRedundantPoints();
+void detectInterest(dataPoint * point);
+void correctInterest();
 
 char* getfield(char * line, int num);
 void readDb();
 int computeDensity(double pointLat, double pointLong);
-void cleanRedundantPoints();
-void detectInterest(dataPoint * point);
-void correctInterest();
+
 #endif
