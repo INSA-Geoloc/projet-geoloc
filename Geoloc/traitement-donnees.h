@@ -12,19 +12,7 @@
 #include <stdio.h>
 #include <math.h>
 
-
-
-
 float to_radians(float degrees);
-void GPStoLambert(float lattitude, float longitude );
-
-// Les constantes par David
-// #define N 0.72560777650
-// #define C 11754255.426
-// #define XS 700000.0
-// #define YS 12655612.050
-// #define LAMBDA0 2.2014025
-// #define E 0.08248325676
-// #define EPSILON 0.00000000001
+void GPStoLambert(float lattitude, float longitude);
 
 #endif /* traitement_donnees_h */
